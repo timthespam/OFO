@@ -1,0 +1,18 @@
+:root{--bg:#0f1724;--card:#0b1220;--accent:#ffb86b;--muted:#a6b0c3}
+*{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,#08101a 0%, #0b1625 100%);color:#e6eef8}
+header{padding:20px;text-align:center}
+.subtitle{color:var(--muted);margin-top:4px}
+#game-area{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;align-items:flex-start;padding:20px}
+#cookie-container{background:rgba(255,255,255,0.03);padding:18px;border-radius:12px;min-width:260px;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+#cookie{font-size:64px;padding:18px;border-radius:50%;border:6px solid rgba(255,255,255,0.06);background:linear-gradient(180deg,#fffaf0,#ffeac4);cursor:pointer}
+#cookie:active{transform:scale(0.98)}
+#cookie-count{font-size:28px;margin-top:12px}
+#cps{color:var(--muted);margin-top:6px}
+#shop{background:rgba(255,255,255,0.03);padding:16px;border-radius:12px;min-width:280px}
+#shop h2{margin-top:0}
+.item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;margin-bottom:8px;background:rgba(255,255,255,0.02)}
+.item button{background:var(--accent);border:none;padding:8px 10px;border-radius:8px;cursor:pointer}
+.item .desc{font-size:14px;color:var(--muted)}
+footer{padding:10px;text-align:center;color:var(--muted)}
+@media (max-width:700px){#game-area{flex-direction:column;align-items:center}#cookie{font-size:56px}}
