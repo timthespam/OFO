@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body {
     margin:0;
     font-family:sans-serif;
@@ -49,3 +50,15 @@ body.dark button {
     background:#333;
     color:#eee;
 }
+=======
+body{margin:0;font-family:sans-serif;transition:0.3s;}
+.hidden{display:none;}
+#mainMenu,#settings,#credits{padding:40px;text-align:center;}
+button{padding:10px 20px;margin:10px;font-size:20px;}
+#game{position:relative;width:100vw;height:100vh;background:rgba(0,0,0,0.1);}
+#target{width:40px;height:40px;border-radius:50%;background:red;position:absolute;} 
+body.light{background:#f5f5f5;color:#111;}
+body.dark{background:#111;color:#eee;}
+body.light button{background:#fff;color:#111;}
+body.dark button{background:#333;color:#eee;}
+>>>>>>> 186dbcbe0237affe63f20938f0885b78c7b9b771
