@@ -7,6 +7,11 @@ const settings = document.getElementById('settings');
 const credits = document.getElementById('credits');
 const loading = document.getElementById('loading');
 const game = document.getElementById('game');
+const endPanel = document.getElementById('endPanel');
+const finalScore = document.getElementById('finalScore');
+const playAgainBtn = document.getElementById('playAgain');
+const backMenuBtn = document.getElementById('backMenu');
+
 const sens = document.getElementById('sens');
 const theme = document.getElementById('theme');
 const hideCursorCheckbox = document.getElementById('hideCursor');
@@ -22,6 +27,9 @@ let score = 0;
 
 // Audio
 let audioCtx, source, analyser, dataArray, audioElement;
+
+// Last circle position
+let lastCirclePos = null;
 
 // Load settings
 function loadSettings(){
@@ -63,6 +71,7 @@ function showScreen(screen){
     credits.classList.add('hidden');
     game.classList.add('hidden');
     loading.classList.add('hidden');
+    endPanel.classList.add('hidden');
     screen.classList.remove('hidden');
     updateCursor();
 }
@@ -76,6 +85,8 @@ document.getElementById('creditsBtn').onclick = ()=>showScreen(credits);
 document.getElementById('backSettings').onclick = ()=>{saveSettings(); showScreen(menu);}
 document.getElementById('backCredits').onclick = ()=>showScreen(menu);
 quitBtn.onclick = ()=>{ if(audioElement) audioElement.pause(); showScreen(menu); };
+playAgainBtn.onclick = ()=>showScreen(upload);
+backMenuBtn.onclick = ()=>showScreen(menu);
 
 // Mouse follow
 document.addEventListener('mousemove', e=>{
@@ -116,12 +127,13 @@ mp3input.onchange = async (e)=>{
     scoreEl.textContent = 'Score: 0';
     pos.x = window.innerWidth/2;
     pos.y = window.innerHeight/2;
+    lastCirclePos = null;
 
     showScreen(game);
     detectBeats();
 };
 
-// Beat detection
+// Beat detection with spacing and chance
 let lastBeatTime = 0;
 function detectBeats(){
     if(!analyser) return;
@@ -132,43 +144,51 @@ function detectBeats(){
     const avg = lowSum/(dataArray.length/4);
 
     const now = audioCtx.currentTime*1000;
-    if(avg>150 && now - lastBeatTime>200){
+
+    // Only spawn beat if enough time passed and random chance
+    if(avg>150 && now - lastBeatTime > 300 && Math.random()<0.7){
         lastBeatTime = now;
         spawnCircle();
     }
 
     if(audioElement.ended){
-        setTimeout(()=>alert(`Song ended! Final Score: ${score}`),100);
-        showScreen(menu);
+        finalScore.textContent = 'Score: '+score;
+        showScreen(endPanel);
         return;
     }
 
     requestAnimationFrame(detectBeats);
 }
 
-// Spawn one circle per beat
+// Spawn one circle per beat with distance rules
 function spawnCircle(){
     const circle = document.createElement('div');
     circle.className = 'beatCircle';
-
     const size = 80;
-    let x,y,safe=false;
-    for(let i=0;i<50;i++){
+
+    let x,y;
+    const minDistance = 120;
+    const maxDistance = 400;
+    let attempts = 50;
+    let safe = false;
+
+    for(let i=0;i<attempts;i++){
         x = Math.random()*(window.innerWidth-size);
         y = Math.random()*(window.innerHeight-size);
-        const circles = document.querySelectorAll('.beatCircle');
-        safe=true;
-        for(let c of circles){
-            const rect = c.getBoundingClientRect();
-            if(Math.abs(rect.left-x)<size && Math.abs(rect.top-y)<size){ safe=false; break; }
+        if(!lastCirclePos){
+            safe=true;
+            break;
         }
-        if(safe) break;
+        const dx = x - lastCirclePos.x;
+        const dy = y - lastCirclePos.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist>=minDistance && dist<=maxDistance){ safe=true; break; }
     }
+    lastCirclePos = {x,y};
 
     circle.style.left = x+'px';
     circle.style.top = y+'px';
-    if(theme.value==='dark') circle.style.background='rgba(255,61,107,0.6)';
-    else circle.style.background='rgba(0,139,139,0.6)';
+    circle.style.background = theme.value==='dark' ? 'rgba(255,61,107,0.6)' : 'rgba(0,139,139,0.6)';
 
     document.body.appendChild(circle);
 
