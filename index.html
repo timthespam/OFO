@@ -14,6 +14,15 @@
         <button id="creditsBtn">Credits</button>
     </div>
 
+    <!-- Upload Song Panel -->
+    <div id="upload" class="hidden panel">
+        <h2>Upload Your Song</h2>
+        <p>Choose an MP3 file to start.</p>
+        <button id="chooseSongBtn">Choose MP3</button>
+        <button id="backUpload">Back</button>
+        <input type="file" id="mp3input" accept="audio/mp3" class="hidden">
+    </div>
+
     <!-- Settings -->
     <div id="settings" class="hidden panel">
         <h2>Settings</h2>
@@ -53,9 +62,6 @@
         <button id="quit">Quit</button>
         <div id="score">Score: 0</div>
     </div>
-
-    <!-- MP3 input (hidden) -->
-    <input type="file" id="mp3input" accept="audio/mp3" class="hidden">
 
     <script src="script.js"></script>
 </body>
