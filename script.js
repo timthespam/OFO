@@ -11,8 +11,8 @@ const quitBtn = document.getElementById('quit');
 // Settings
 let sensitivity = 1;
 
-// Smooth mouse follow
-let pos = {x: window.innerWidth/2, y: window.innerHeight/2};
+// Position for smooth follow
+let pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
 // Load saved settings
 function loadSettings() {
@@ -28,9 +28,10 @@ function saveSettings() {
     localStorage.setItem('sens', sens.value);
     localStorage.setItem('theme', theme.value);
     document.body.className = theme.value;
+    sensitivity = parseFloat(sens.value);
 }
 
-// Show and hide screens
+// Show a screen and hide others
 function showScreen(screen) {
     menu.classList.add('hidden');
     settings.classList.add('hidden');
@@ -39,28 +40,36 @@ function showScreen(screen) {
     screen.classList.remove('hidden');
 }
 
-// Buttons
-document.getElementById('playBtn').onclick = () => showScreen(game);
+// Button click handlers
+document.getElementById('playBtn').onclick = () => {
+    pos.x = window.innerWidth / 2;
+    pos.y = window.innerHeight / 2;
+    showScreen(game);
+};
 document.getElementById('settingsBtn').onclick = () => showScreen(settings);
 document.getElementById('creditsBtn').onclick = () => showScreen(credits);
 document.getElementById('backSettings').onclick = () => { saveSettings(); showScreen(menu); };
 document.getElementById('backCredits').onclick = () => showScreen(menu);
 quitBtn.onclick = () => showScreen(menu);
 
-// Mouse movement for target
+// Mouse movement for target (smooth follow)
 document.addEventListener('mousemove', e => {
-    if(game.classList.contains('hidden')) return;
-    let dx = e.clientX - pos.x;
-    let dy = e.clientY - pos.y;
-    pos.x += dx * sensitivity;
-    pos.y += dy * sensitivity;
-    target.style.left = (pos.x - 20) + 'px';
-    target.style.top = (pos.y - 20) + 'px';
+    if (game.classList.contains('hidden')) return;
+
+    let x = e.clientX - 20; // center the target
+    let y = e.clientY - 20;
+
+    // Smooth follow based on sensitivity
+    pos.x += (x - pos.x) * sensitivity;
+    pos.y += (y - pos.y) * sensitivity;
+
+    target.style.left = pos.x + 'px';
+    target.style.top = pos.y + 'px';
 });
 
-// Save settings when changed
+// Save settings when inputs change
 sens.oninput = saveSettings;
 theme.oninput = saveSettings;
 
-// Load settings on start
+// Initialize
 loadSettings();
