@@ -25,13 +25,13 @@ let hideCursor = false;
 let pos = {x: window.innerWidth/2, y: window.innerHeight/2};
 let score = 0;
 
-// Audio
+
 let audioCtx, source, analyser, dataArray, audioElement;
 
-// Last circle position
+
 let lastCirclePos = null;
 
-// Load settings
+// br
 function loadSettings(){
     sensitivity = parseFloat(localStorage.getItem('sens')||'1');
     sens.value = sensitivity;
@@ -45,7 +45,6 @@ function loadSettings(){
     updateCursor();
 }
 
-// Save settings
 function saveSettings(){
     localStorage.setItem('sens', sens.value);
     localStorage.setItem('theme', theme.value);
@@ -57,13 +56,13 @@ function saveSettings(){
     updateCursor();
 }
 
-// Cursor visibility
+// mouse thing
 function updateCursor(){
     if(!game.classList.contains('hidden') && hideCursor) document.body.classList.add('hide-cursor');
     else document.body.classList.remove('hide-cursor');
 }
 
-// Show only one panel
+//a
 function showScreen(screen){
     menu.classList.add('hidden');
     upload.classList.add('hidden');
@@ -76,7 +75,7 @@ function showScreen(screen){
     updateCursor();
 }
 
-// Buttons
+//---------new section
 document.getElementById('playBtn').onclick = ()=>showScreen(upload);
 chooseSongBtn.onclick = ()=>fileInput.click();
 backUpload.onclick = ()=>showScreen(menu);
@@ -88,7 +87,7 @@ quitBtn.onclick = ()=>{ if(audioElement) audioElement.pause(); showScreen(menu);
 playAgainBtn.onclick = ()=>showScreen(upload);
 backMenuBtn.onclick = ()=>showScreen(menu);
 
-// Mouse follow
+//dsalalallalallala
 document.addEventListener('mousemove', e=>{
     if(game.classList.contains('hidden')) return;
     let x = e.clientX-20;
@@ -101,7 +100,7 @@ document.addEventListener('mousemove', e=>{
     target.style.top = pos.y+'px';
 });
 
-// File upload & loading with robust MP3 validation & error handling
+//break
 fileInput.onchange = e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -129,7 +128,7 @@ async function startSong(file){
     if(!audioCtx) audioCtx = new AudioContext();
     const arrayBuffer = await file.arrayBuffer();
 
-    // Decode safely
+    
     try {
         await new Promise((resolve,reject)=>{
             audioCtx.decodeAudioData(arrayBuffer, resolve, reject);
@@ -165,7 +164,7 @@ async function startSong(file){
     detectBeats();
 }
 
-// Beat detection
+// brrrrrrrrrr
 let lastBeatTime = 0;
 function detectBeats(){
     if(!analyser) return;
@@ -191,7 +190,7 @@ function detectBeats(){
     requestAnimationFrame(detectBeats);
 }
 
-// Spawn circle per beat
+// brrrrrr
 function spawnCircle(){
     const circle = document.createElement('div');
     circle.className = 'beatCircle';
@@ -227,7 +226,7 @@ function spawnCircle(){
     setTimeout(()=>circle.remove(),1000);
 }
 
-// Settings
+// brrrrrr
 sens.oninput = saveSettings;
 theme.oninput = saveSettings;
 hideCursorCheckbox.oninput = saveSettings;
