@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OFO</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="brand">OFO</div>
+      <div class="theme-toggle" id="themeToggle">Light</div>
+    </header>
+
+    <main>
+      <section id="menu" class="screen active">
+        <h1 class="title">OFO</h1>
+        <div class="menu-buttons">
+          <button class="btn" id="playBtn">Play</button>
+          <button class="btn" id="settingsBtn">Settings</button>
+          <button class="btn" id="creditsBtn">Credits</button>
+        </div>
+      </section>
+
+      <section id="settings" class="screen">
+        <h2>Settings</h2>
+        <div class="setting-row">
+          <label>Sensitivity</label>
+          <input type="range" id="sensitivity" min="0.5" max="3" step="0.1" value="1">
+          <div id="sensVal">1.0</div>
+        </div>
+        <div class="setting-row">
+          <label>Theme</label>
+          <select id="themeSelect">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <button class="btn" id="saveSettings">Save</button>
+          <button class="btn" id="backFromSettings">Back</button>
+        </div>
+      </section>
+
+      <section id="credits" class="screen">
+        <h2>Credits</h2>
+        <div class="credit-card">Made by Timthespam V 1.0</div>
+        <div class="setting-row">
+          <button class="btn" id="backFromCredits">Back</button>
+        </div>
+      </section>
+
+      <section id="game" class="screen">
+        <div class="game-header">
+          <div>Score: <span id="score">0</span></div>
+          <div>Hits: <span id="hits">0</span> Misses: <span id="misses">0</span></div>
+          <div><button class="btn" id="quitBtn">Quit</button></div>
+        </div>
+        <div id="arena" tabindex="0"></div>
+      </section>
+    </main>
+
+    <footer class="footer">OFO - Aim Rhythm Trainer</footer>
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>
