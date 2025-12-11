@@ -101,15 +101,16 @@ document.addEventListener('mousemove', e=>{
     target.style.top = pos.y+'px';
 });
 
-// File upload & loading
-fileInput.onchange = async e=>{
+// File upload & loading with proper MP3 validation
+fileInput.onchange = async e => {
     const file = e.target.files[0];
     if(!file) return;
 
-    // Validate MP3
-    const isMp3 = file.name.toLowerCase().endsWith('.mp3') || file.type==='audio/mpeg';
+    // Validate MP3 immediately
+    const isMp3 = file.type === 'audio/mpeg' || file.name.toLowerCase().endsWith('.mp3');
     if(!isMp3){
-        alert('⚠️ Not an MP3 file! Please choose a valid MP3.');
+        alert('⚠️ Invalid file! Please select an MP3 file.');
+        fileInput.value = ''; // reset input
         return;
     }
 
