@@ -6,9 +6,13 @@ const game = document.getElementById('game');
 const sens = document.getElementById('sens');
 const theme = document.getElementById('theme');
 const target = document.getElementById('target');
+const quitBtn = document.getElementById('quit');
 
 // Settings
 let sensitivity = 1;
+
+// Smooth mouse follow
+let pos = {x: window.innerWidth/2, y: window.innerHeight/2};
 
 // Load saved settings
 function loadSettings() {
@@ -41,20 +45,22 @@ document.getElementById('settingsBtn').onclick = () => showScreen(settings);
 document.getElementById('creditsBtn').onclick = () => showScreen(credits);
 document.getElementById('backSettings').onclick = () => { saveSettings(); showScreen(menu); };
 document.getElementById('backCredits').onclick = () => showScreen(menu);
-document.getElementById('quit').onclick = () => showScreen(menu);
+quitBtn.onclick = () => showScreen(menu);
 
-// Move target with mouse
+// Mouse movement for target
 document.addEventListener('mousemove', e => {
     if(game.classList.contains('hidden')) return;
-    let x = e.clientX - 20;
-    let y = e.clientY - 20;
-    target.style.left = (x * sensitivity) + 'px';
-    target.style.top = (y * sensitivity) + 'px';
+    let dx = e.clientX - pos.x;
+    let dy = e.clientY - pos.y;
+    pos.x += dx * sensitivity;
+    pos.y += dy * sensitivity;
+    target.style.left = (pos.x - 20) + 'px';
+    target.style.top = (pos.y - 20) + 'px';
 });
 
 // Save settings when changed
 sens.oninput = saveSettings;
 theme.oninput = saveSettings;
 
-// Load on start
+// Load settings on start
 loadSettings();

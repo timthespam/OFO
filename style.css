@@ -3,17 +3,33 @@ body {
     font-family:sans-serif;
     transition:0.3s;
 }
+
 .hidden { display:none; }
 
-#menu, #settings, #credits {
-    padding:40px;
-    text-align:center;
+.panel {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    background-color: rgba(255,255,255,0.95);
+    text-align: center;
+    transition: 0.3s;
 }
 
-button {
-    padding:10px 20px;
-    margin:10px;
-    font-size:20px;
+body.dark .panel {
+    background-color: rgba(50,50,50,0.95);
+    color: #eee;
+}
+
+.panel h2 {
+    margin-top: 0;
+}
+
+.panel button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 18px;
     cursor:pointer;
 }
 
@@ -21,7 +37,8 @@ button {
     position:relative;
     width:100vw;
     height:100vh;
-    background:rgba(0,0,0,0.1);
+    background: rgba(0,0,0,0.05);
+    z-index: 1;
 }
 
 #target {
@@ -30,6 +47,11 @@ button {
     border-radius:50%;
     background:red;
     position:absolute;
+}
+
+#menu, #settings, #credits {
+    position: relative;
+    z-index: 2;
 }
 
 body.light {
