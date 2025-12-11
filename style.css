@@ -38,8 +38,8 @@ body.dark .panel {
 }
 
 #settings label {
-    display: block;
-    margin-top: 10px;
+    display:block;
+    margin-top:10px;
 }
 
 /* Game fullscreen */
@@ -72,6 +72,27 @@ body.dark .panel {
     padding:10px 20px;
     font-size:18px;
     cursor:pointer;
+}
+
+/* Score display */
+#score {
+    position:fixed;
+    top:20px;
+    left:20px;
+    font-size:20px;
+    z-index:999;
+}
+
+/* Beat circles */
+.beatCircle {
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    position:absolute;
+    z-index:900;
+    cursor:pointer;
+    pointer-events:auto;
+    transition:0.2s;
 }
 
 /* Hide real cursor */
