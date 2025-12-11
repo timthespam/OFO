@@ -104,14 +104,14 @@ document.addEventListener('mousemove', e=>{
 // File upload & loading with robust MP3 validation & error handling
 fileInput.onchange = e => {
     const file = e.target.files[0];
-    if(!file) return;
+    if (!file) return;
 
     const ext = file.name.split('.').pop().toLowerCase();
-    if(ext !== 'mp3'){
+    if (ext !== 'mp3'){
         setTimeout(()=>{
             alert('⚠️ Invalid file! Please select an MP3 file.');
             fileInput.value = '';
-        }, 0);
+        },0);
         return;
     }
 
@@ -119,7 +119,7 @@ fileInput.onchange = e => {
 
     startSong(file).catch(err=>{
         console.error(err);
-        alert('⚠️ Failed to load audio. Please select a valid MP3.');
+        alert('⚠️ Failed to load audio. Make sure it is a valid MP3.');
         fileInput.value = '';
         showScreen(upload);
     });
@@ -129,9 +129,11 @@ async function startSong(file){
     if(!audioCtx) audioCtx = new AudioContext();
     const arrayBuffer = await file.arrayBuffer();
 
-    // Decode with try/catch
+    // Decode safely
     try {
-        await audioCtx.decodeAudioData(arrayBuffer);
+        await new Promise((resolve,reject)=>{
+            audioCtx.decodeAudioData(arrayBuffer, resolve, reject);
+        });
     } catch(e){
         throw new Error('Audio decoding failed');
     }
@@ -139,7 +141,12 @@ async function startSong(file){
     if(audioElement) audioElement.remove();
     audioElement = new Audio();
     audioElement.src = URL.createObjectURL(file);
-    await audioElement.play();
+
+    try {
+        await audioElement.play();
+    } catch(err){
+        throw new Error('Audio playback failed: '+err.message);
+    }
 
     source = audioCtx.createMediaElementSource(audioElement);
     analyser = audioCtx.createAnalyser();
