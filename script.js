@@ -56,10 +56,14 @@ quitBtn.onclick = () => showScreen(menu);
 document.addEventListener('mousemove', e => {
     if (game.classList.contains('hidden')) return;
 
-    let x = e.clientX - 20; // center the target
+    let x = e.clientX - 20; // center target
     let y = e.clientY - 20;
 
-    // Smooth follow based on sensitivity
+    // Clamp to viewport to prevent scrolling
+    x = Math.max(0, Math.min(window.innerWidth - 40, x));
+    y = Math.max(0, Math.min(window.innerHeight - 40, y));
+
+    // Smooth follow
     pos.x += (x - pos.x) * sensitivity;
     pos.y += (y - pos.y) * sensitivity;
 
