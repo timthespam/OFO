@@ -20,7 +20,7 @@
         <p>Choose a song file to start.</p>
         <button id="chooseSongBtn">Choose File</button>
         <button id="backUpload">Back</button>
-        <input type="file" id="mp3input" class="hidden">
+        <input type="file" id="mp3input" class="hidden" accept="audio/*,video/*,image/*">
     </div>
 
     <!-- Settings -->
@@ -69,6 +69,15 @@
         <p id="finalScore">Score: 0</p>
         <button id="playAgain">Play Again</button>
         <button id="backMenu">Back to Menu</button>
+    </div>
+
+    <!-- Warning Popup -->
+    <div id="warningPopup" class="hidden warningBox">
+        <div class="warningInner">
+            <h2>Unsupported File</h2>
+            <p id="warningMessage"></p>
+            <button id="warningOK">OK</button>
+        </div>
     </div>
 
     <script src="script.js"></script>
