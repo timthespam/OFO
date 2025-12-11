@@ -1,0 +1,63 @@
+:root{
+  --bg-dark:#081220;
+  --panel-dark:#0f2230;
+  --accent:#57d7ff;
+  --muted:#9bb0c6;
+  --btn-dark:#0b1824;
+  --btn-light:#ffffff;
+  --bg-light:#f5f8fb;
+  --panel-light:#ffffff;
+  --text-light:#0b1720;
+  --ad-bg:rgba(255,255,255,0.03);
+}
+
+*{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--fg)}
+main{min-height:100vh;display:flex;flex-direction:column}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 18px}
+.logo{font-weight:800;letter-spacing:4px}
+.top-controls .tiny{padding:6px 10px;border-radius:8px;}
+
+/* menu */
+.screen{display:none;align-items:center;justify-content:center;padding:28px}
+.screen.active{display:flex}
+.center-card{max-width:900px;text-align:center}
+.ofo-title{font-size:112px;margin:0;letter-spacing:8px}
+.subtitle{color:var(--muted);margin-bottom:18px}
+.menu-buttons{display:flex;flex-direction:column;gap:12px;align-items:center}
+button.big{padding:16px 26px;border-radius:12px;border:none;cursor:pointer;font-weight:700;min-width:220px;transition:transform .14s,background .14s}
+button.big:hover{transform:translateY(-4px)}
+button.ghost{background:transparent;border:2px solid rgba(255,255,255,0.06)}
+button.small{padding:8px 12px;min-width:80px}
+
+/* panels */
+.panel{max-width:720px;padding:18px;border-radius:12px}
+.row{display:flex;align-items:center;gap:12px;margin:12px 0}
+.row label{min-width:90px}
+.row.actions{justify-content:center}
+
+/* arena */
+#arenaWrap{width:100%;max-width:1200px;margin:12px auto;padding:12px}
+#arena{width:100%;height:60vh;border-radius:12px;display:block;outline:none}
+.game-top{display:flex;justify-content:space-between;align-items:center;padding:8px 18px;max-width:1200px;margin:0 auto}
+
+/* ad placeholders */
+.ad{position:fixed;top:12%;width:140px;height:280px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--ad-bg);z-index:50}
+.ad-left{left:12px}
+.ad-right{right:12px}
+
+/* themes */
+.theme-dark{--bg:linear-gradient(180deg,var(--bg-dark),#071422);--panel:var(--panel-dark);--fg:#eaf6ff;--btnbg:var(--btn-dark);--btntext:#eaf6ff}
+.theme-light{--bg:var(--bg-light);--panel:var(--panel-light);--fg:var(--text-light);--btnbg:var(--btn-light);--btntext:var(--text-light)}
+/* apply theme colors */
+main{background:var(--bg);color:var(--fg)}
+.panel{background:var(--panel);box-shadow:0 6px 24px rgba(2,6,12,0.6);padding:24px}
+button.big{background:var(--btnbg);color:var(--btntext)}
+button.ghost{border-color:rgba(0,0,0,0.08);color:var(--btntext)}
+button.tiny{background:transparent;color:var(--fg);border:2px solid rgba(255,255,255,0.04);padding:6px 10px;border-radius:8px}
+
+/* target & cursor visuals handled in canvas drawing */
+.footer{text-align:center;padding:12px;color:var(--muted)}
+
+/* responsive */
+@media (max-width:900px){.ofo-title{font-size:72px}.ad{display:none}#arena{height:50vh}}
