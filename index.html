@@ -20,7 +20,7 @@
         <p>Choose a song file to start.</p>
         <button id="chooseSongBtn">Choose File</button>
         <button id="backUpload">Back</button>
-        <input type="file" id="mp3input" class="hidden" accept="audio/*">
+        <input type="file" id="mp3input" class="hidden">
     </div>
 
     <!-- Settings -->
@@ -28,7 +28,7 @@
         <h2>Settings</h2>
         <label>Sensitivity: <input type="range" id="sens" min="0.5" max="3" step="0.1"></label>
         <br>
-        <label>Theme:
+        <label>Theme: 
             <select id="theme">
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
@@ -69,15 +69,6 @@
         <p id="finalScore">Score: 0</p>
         <button id="playAgain">Play Again</button>
         <button id="backMenu">Back to Menu</button>
-    </div>
-
-    <!-- Warning Popup (hidden by default) -->
-    <div id="warningPopup" class="hidden">
-        <div class="warningBoxInner">
-            <h3>Unsupported file</h3>
-            <p id="warningMessage">This file is not a valid MP3.</p>
-            <button id="warningOK">OK</button>
-        </div>
     </div>
 
     <script src="script.js"></script>

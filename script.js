@@ -20,10 +20,6 @@ const quitBtn = document.getElementById('quit');
 const scoreEl = document.getElementById('score');
 const fileInput = document.getElementById('mp3input');
 
-const warningPopup = document.getElementById('warningPopup');
-const warningMessage = document.getElementById('warningMessage');
-const warningOK = document.getElementById('warningOK');
-
 let sensitivity = 1;
 let hideCursor = false;
 let pos = {x: window.innerWidth/2, y: window.innerHeight/2};
@@ -31,12 +27,11 @@ let score = 0;
 
 // Audio
 let audioCtx, source, analyser, dataArray, audioElement;
+
+// Last circle position
 let lastCirclePos = null;
 
-// IMPORTANT: only treat file changes as user-initiated if they clicked "Choose File"
-let userRequestedFile = false;
-
-// ---------------- Settings load/save ----------------
+// Load settings
 function loadSettings(){
     sensitivity = parseFloat(localStorage.getItem('sens')||'1');
     sens.value = sensitivity;
@@ -45,27 +40,30 @@ function loadSettings(){
     theme.value = t;
     document.body.className = t;
 
-    hideCursor = localStorage.getItem('hideCursor') === 'true';
+    hideCursor = localStorage.getItem('hideCursor')==='true';
     hideCursorCheckbox.checked = hideCursor;
     updateCursor();
 }
 
+// Save settings
 function saveSettings(){
     localStorage.setItem('sens', sens.value);
     localStorage.setItem('theme', theme.value);
     localStorage.setItem('hideCursor', hideCursorCheckbox.checked);
+
     sensitivity = parseFloat(sens.value);
     hideCursor = hideCursorCheckbox.checked;
     document.body.className = theme.value;
     updateCursor();
 }
 
+// Cursor visibility
 function updateCursor(){
     if(!game.classList.contains('hidden') && hideCursor) document.body.classList.add('hide-cursor');
     else document.body.classList.remove('hide-cursor');
 }
 
-// ---------------- Screen switching ----------------
+// Show only one panel
 function showScreen(screen){
     menu.classList.add('hidden');
     upload.classList.add('hidden');
@@ -74,118 +72,82 @@ function showScreen(screen){
     game.classList.add('hidden');
     loading.classList.add('hidden');
     endPanel.classList.add('hidden');
-    warningPopup.classList.add('hidden');
-
     screen.classList.remove('hidden');
     updateCursor();
 }
 
-// ---------------- Buttons ----------------
+// Buttons
 document.getElementById('playBtn').onclick = ()=>showScreen(upload);
-chooseSongBtn.onclick = ()=> { userRequestedFile = true; fileInput.click(); };
+chooseSongBtn.onclick = ()=>fileInput.click();
 backUpload.onclick = ()=>showScreen(menu);
 document.getElementById('settingsBtn').onclick = ()=>showScreen(settings);
 document.getElementById('creditsBtn').onclick = ()=>showScreen(credits);
-document.getElementById('backSettings').onclick = ()=>{ saveSettings(); showScreen(menu); };
+document.getElementById('backSettings').onclick = ()=>{saveSettings(); showScreen(menu);}
 document.getElementById('backCredits').onclick = ()=>showScreen(menu);
 quitBtn.onclick = ()=>{ if(audioElement) audioElement.pause(); showScreen(menu); };
 playAgainBtn.onclick = ()=>showScreen(upload);
 backMenuBtn.onclick = ()=>showScreen(menu);
 
-// Warning popup OK
-warningOK && (warningOK.onclick = ()=> { warningPopup.classList.add('hidden'); });
-
-// ---------------- Cursor movement ----------------
+// Mouse follow
 document.addEventListener('mousemove', e=>{
     if(game.classList.contains('hidden')) return;
-    let x = e.clientX - 20;
-    let y = e.clientY - 20;
-    pos.x += (x - pos.x) * sensitivity * 0.5;
-    pos.y += (y - pos.y) * sensitivity * 0.5;
-    pos.x = Math.max(0, Math.min(window.innerWidth - 40, pos.x));
-    pos.y = Math.max(0, Math.min(window.innerHeight - 40, pos.y));
-    target.style.left = pos.x + 'px';
-    target.style.top = pos.y + 'px';
+    let x = e.clientX-20;
+    let y = e.clientY-20;
+    pos.x += (x-pos.x)*sensitivity*0.5;
+    pos.y += (y-pos.y)*sensitivity*0.5;
+    pos.x = Math.max(0, Math.min(window.innerWidth-40, pos.x));
+    pos.y = Math.max(0, Math.min(window.innerHeight-40, pos.y));
+    target.style.left = pos.x+'px';
+    target.style.top = pos.y+'px';
 });
 
-// target visual feedback
-target.addEventListener('click', ()=>{
-    target.classList.add('clicked');
-    setTimeout(()=>target.classList.remove('clicked'), 150);
-});
-
-// ---------------- File handling (only if userRequestedFile) ----------------
-fileInput.onchange = async (e) => {
+// File upload & loading with robust MP3 validation & error handling
+fileInput.onchange = e => {
     const file = e.target.files[0];
+    if (!file) return;
 
-    // Reset flag immediately (we only want to treat this change once right after button click)
-    const wasUserRequested = userRequestedFile;
-    userRequestedFile = false;
-
-    if(!file) return; // user canceled picker
-
-    if(!wasUserRequested){
-        // This onchange wasn't caused by the user clicking "Choose File" (browser autofill/restore).
-        // Ignore silently and clear input.
-        fileInput.value = '';
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (ext !== 'mp3'){
+        setTimeout(()=>{
+            alert('⚠️ Invalid file! Please select an MP3 file.');
+            fileInput.value = '';
+        },0);
         return;
     }
 
-    // Validate extension immediately (case-insensitive)
-    const name = (file.name || '').toLowerCase();
-    const ext = name.split('.').pop();
-    if(ext !== 'mp3'){
-        // show popup warning (not during load)
-        warningMessage.textContent = 'Please upload an MP3 file.';
-        warningPopup.classList.remove('hidden');
-        fileInput.value = '';
-        return;
-    }
-
-    // Proceed to loading screen and try to decode safely
     showScreen(loading);
 
-    try {
-        await startSong(file);
-    } catch(err){
+    startSong(file).catch(err=>{
         console.error(err);
-        warningMessage.textContent = 'Failed to load audio. Try a different MP3.';
-        warningPopup.classList.remove('hidden');
+        alert('⚠️ Failed to load audio. Make sure it is a valid MP3.');
         fileInput.value = '';
         showScreen(upload);
-    }
+    });
 };
 
-// ---------------- Safe audio start ----------------
 async function startSong(file){
     if(!audioCtx) audioCtx = new AudioContext();
-
     const arrayBuffer = await file.arrayBuffer();
 
-    // Safely decode (catch failures)
+    // Decode safely
     try {
-        await new Promise((resolve, reject) => {
+        await new Promise((resolve,reject)=>{
             audioCtx.decodeAudioData(arrayBuffer, resolve, reject);
         });
     } catch(e){
-        throw new Error('Decoding failed');
+        throw new Error('Audio decoding failed');
     }
 
-    // Create element and play (catch autoplay errors)
-    if(audioElement) {
-        try { audioElement.pause(); } catch {}
-        audioElement.remove();
-    }
+    if(audioElement) audioElement.remove();
     audioElement = new Audio();
     audioElement.src = URL.createObjectURL(file);
 
     try {
         await audioElement.play();
     } catch(err){
-        throw new Error('Playback failed: ' + (err && err.message || err));
+        throw new Error('Audio playback failed: '+err.message);
     }
 
-    // Hook analyzer
     source = audioCtx.createMediaElementSource(audioElement);
     analyser = audioCtx.createAnalyser();
     analyser.fftSize = 1024;
@@ -193,37 +155,35 @@ async function startSong(file){
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
 
-    // reset game state
     score = 0;
     scoreEl.textContent = 'Score: 0';
+    pos.x = window.innerWidth/2;
+    pos.y = window.innerHeight/2;
     lastCirclePos = null;
 
     showScreen(game);
     detectBeats();
 }
 
-// ---------------- Beat detection ----------------
+// Beat detection
 let lastBeatTime = 0;
 function detectBeats(){
     if(!analyser) return;
     analyser.getByteFrequencyData(dataArray);
 
     let lowSum = 0;
-    // average lower bins (bass)
-    const bins = Math.min(40, dataArray.length);
-    for(let i=0;i<bins;i++) lowSum += dataArray[i];
-    const avg = lowSum / bins;
+    for(let i=0;i<dataArray.length/4;i++) lowSum+=dataArray[i];
+    const avg = lowSum/(dataArray.length/4);
 
-    const now = (audioCtx && audioCtx.currentTime ? audioCtx.currentTime*1000 : Date.now());
+    const now = audioCtx.currentTime*1000;
 
-    // spawn less often and with randomness to reduce spam on slow tracks
-    if(avg > 140 && now - lastBeatTime > 350 && Math.random() < 0.55){
+    if(avg>150 && now - lastBeatTime > 300 && Math.random()<0.7){
         lastBeatTime = now;
         spawnCircle();
     }
 
-    if(audioElement && audioElement.ended){
-        finalScore.textContent = 'Score: ' + score;
+    if(audioElement.ended){
+        finalScore.textContent = 'Score: '+score;
         showScreen(endPanel);
         return;
     }
@@ -231,52 +191,43 @@ function detectBeats(){
     requestAnimationFrame(detectBeats);
 }
 
-// ---------------- Spawn circle ----------------
+// Spawn circle per beat
 function spawnCircle(){
     const circle = document.createElement('div');
     circle.className = 'beatCircle';
     const size = 80;
 
     let x,y;
-    const minDist = 120;
-    const maxDist = 350;
-
-    for(let i=0;i<60;i++){
-        x = Math.random() * (window.innerWidth - size);
-        y = Math.random() * (window.innerHeight - size);
+    const minDistance = 120;
+    const maxDistance = 400;
+    let attempts = 50;
+    for(let i=0;i<attempts;i++){
+        x = Math.random()*(window.innerWidth-size);
+        y = Math.random()*(window.innerHeight-size);
         if(!lastCirclePos) break;
         const dx = x - lastCirclePos.x;
         const dy = y - lastCirclePos.y;
-        const d = Math.hypot(dx,dy);
-        if(d >= minDist && d <= maxDist) break;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist>=minDistance && dist<=maxDistance) break;
     }
-
     lastCirclePos = {x,y};
 
-    circle.style.left = x + 'px';
-    circle.style.top = y + 'px';
-    circle.style.background = (theme.value === 'dark') ? 'rgba(255,61,107,0.6)' : 'rgba(0,139,139,0.6)';
+    circle.style.left = x+'px';
+    circle.style.top = y+'px';
+    circle.style.background = theme.value==='dark' ? 'rgba(255,61,107,0.6)' : 'rgba(0,139,139,0.6)';
 
     document.body.appendChild(circle);
 
-    // click behavior
     circle.onclick = ()=>{
-        score += 100;
-        scoreEl.textContent = 'Score: ' + score;
+        score+=100;
+        scoreEl.textContent='Score: '+score;
+        circle.remove();
+    }
 
-        circle.style.transition = 'transform 0.12s ease, filter 0.12s ease, opacity 0.15s ease';
-        circle.style.transform = 'scale(1.35)';
-        circle.style.filter = 'brightness(2)';
-        circle.style.opacity = '0';
-
-        setTimeout(()=>{ if(circle.parentNode) circle.remove(); }, 160);
-    };
-
-    // auto remove in case not clicked
-    setTimeout(()=>{ if(circle.parentNode) circle.remove(); }, 1000);
+    setTimeout(()=>circle.remove(),1000);
 }
 
-// ---------------- Final setup -------------
+// Settings
 sens.oninput = saveSettings;
 theme.oninput = saveSettings;
 hideCursorCheckbox.oninput = saveSettings;
