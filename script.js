@@ -18,7 +18,7 @@ const hideCursorCheckbox = document.getElementById('hideCursor');
 const target = document.getElementById('target');
 const quitBtn = document.getElementById('quit');
 const scoreEl = document.getElementById('score');
-const mp3input = document.getElementById('mp3input');
+const fileInput = document.getElementById('mp3input');
 
 let sensitivity = 1;
 let hideCursor = false;
@@ -78,7 +78,7 @@ function showScreen(screen){
 
 // Buttons
 document.getElementById('playBtn').onclick = ()=>showScreen(upload);
-chooseSongBtn.onclick = ()=>mp3input.click();
+chooseSongBtn.onclick = ()=>fileInput.click();
 backUpload.onclick = ()=>showScreen(menu);
 document.getElementById('settingsBtn').onclick = ()=>showScreen(settings);
 document.getElementById('creditsBtn').onclick = ()=>showScreen(credits);
@@ -101,10 +101,18 @@ document.addEventListener('mousemove', e=>{
     target.style.top = pos.y+'px';
 });
 
-// MP3 upload & loading
-mp3input.onchange = async (e)=>{
+// File upload & loading
+fileInput.onchange = async e=>{
     const file = e.target.files[0];
     if(!file) return;
+
+    // Validate MP3
+    const isMp3 = file.name.toLowerCase().endsWith('.mp3') || file.type==='audio/mpeg';
+    if(!isMp3){
+        alert('⚠️ Not an MP3 file! Please choose a valid MP3.');
+        return;
+    }
+
     showScreen(loading);
 
     if(!audioCtx) audioCtx = new AudioContext();
@@ -133,7 +141,7 @@ mp3input.onchange = async (e)=>{
     detectBeats();
 };
 
-// Beat detection with spacing and chance
+// Beat detection
 let lastBeatTime = 0;
 function detectBeats(){
     if(!analyser) return;
@@ -145,7 +153,6 @@ function detectBeats(){
 
     const now = audioCtx.currentTime*1000;
 
-    // Only spawn beat if enough time passed and random chance
     if(avg>150 && now - lastBeatTime > 300 && Math.random()<0.7){
         lastBeatTime = now;
         spawnCircle();
@@ -160,7 +167,7 @@ function detectBeats(){
     requestAnimationFrame(detectBeats);
 }
 
-// Spawn one circle per beat with distance rules
+// Spawn circle per beat
 function spawnCircle(){
     const circle = document.createElement('div');
     circle.className = 'beatCircle';
@@ -170,19 +177,14 @@ function spawnCircle(){
     const minDistance = 120;
     const maxDistance = 400;
     let attempts = 50;
-    let safe = false;
-
     for(let i=0;i<attempts;i++){
         x = Math.random()*(window.innerWidth-size);
         y = Math.random()*(window.innerHeight-size);
-        if(!lastCirclePos){
-            safe=true;
-            break;
-        }
+        if(!lastCirclePos) break;
         const dx = x - lastCirclePos.x;
         const dy = y - lastCirclePos.y;
         const dist = Math.sqrt(dx*dx + dy*dy);
-        if(dist>=minDistance && dist<=maxDistance){ safe=true; break; }
+        if(dist>=minDistance && dist<=maxDistance) break;
     }
     lastCirclePos = {x,y};
 
@@ -201,7 +203,7 @@ function spawnCircle(){
     setTimeout(()=>circle.remove(),1000);
 }
 
-// Settings inputs
+// Settings
 sens.oninput = saveSettings;
 theme.oninput = saveSettings;
 hideCursorCheckbox.oninput = saveSettings;
