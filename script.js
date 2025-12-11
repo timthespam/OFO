@@ -46,8 +46,14 @@ function showScreen(screen){
     credits.classList.add('hidden');
     game.classList.add('hidden');
     screen.classList.remove('hidden');
-    if(screen===game && hideCursor) document.body.classList.add('hide-cursor');
-    else document.body.classList.remove('hide-cursor');
+
+    // Cursor visibility
+    if(screen===game) {
+        if(hideCursor) document.body.classList.add('hide-cursor');
+        else document.body.classList.remove('hide-cursor');
+    } else {
+        document.body.classList.remove('hide-cursor');
+    }
 }
 
 // Buttons

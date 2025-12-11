@@ -37,7 +37,12 @@ body.dark .panel {
     cursor:pointer;
 }
 
-/* Game full screen */
+#settings label {
+    display: block;
+    margin-top: 10px;
+}
+
+/* Game fullscreen */
 #game {
     position:fixed;
     top:0;
