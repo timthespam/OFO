@@ -101,12 +101,11 @@ document.addEventListener('mousemove', e=>{
     target.style.top = pos.y+'px';
 });
 
-// File upload & loading with robust MP3 validation
+// File upload & loading with robust MP3 validation & error handling
 fileInput.onchange = e => {
     const file = e.target.files[0];
     if(!file) return;
 
-    // Robust validation using filename extension
     const ext = file.name.split('.').pop().toLowerCase();
     if(ext !== 'mp3'){
         setTimeout(()=>{
@@ -116,20 +115,31 @@ fileInput.onchange = e => {
         return;
     }
 
-    startSong(file);
+    showScreen(loading);
+
+    startSong(file).catch(err=>{
+        console.error(err);
+        alert('⚠️ Failed to load audio. Please select a valid MP3.');
+        fileInput.value = '';
+        showScreen(upload);
+    });
 };
 
 async function startSong(file){
-    showScreen(loading);
-
     if(!audioCtx) audioCtx = new AudioContext();
     const arrayBuffer = await file.arrayBuffer();
-    await audioCtx.decodeAudioData(arrayBuffer);
+
+    // Decode with try/catch
+    try {
+        await audioCtx.decodeAudioData(arrayBuffer);
+    } catch(e){
+        throw new Error('Audio decoding failed');
+    }
 
     if(audioElement) audioElement.remove();
     audioElement = new Audio();
     audioElement.src = URL.createObjectURL(file);
-    audioElement.play();
+    await audioElement.play();
 
     source = audioCtx.createMediaElementSource(audioElement);
     analyser = audioCtx.createAnalyser();
