@@ -101,19 +101,25 @@ document.addEventListener('mousemove', e=>{
     target.style.top = pos.y+'px';
 });
 
-// File upload & loading with proper MP3 validation
-fileInput.onchange = async e => {
+// File upload & loading with robust MP3 validation
+fileInput.onchange = e => {
     const file = e.target.files[0];
     if(!file) return;
 
-    // Validate MP3 immediately
-    const isMp3 = file.type === 'audio/mpeg' || file.name.toLowerCase().endsWith('.mp3');
-    if(!isMp3){
-        alert('⚠️ Invalid file! Please select an MP3 file.');
-        fileInput.value = ''; // reset input
+    // Robust validation using filename extension
+    const ext = file.name.split('.').pop().toLowerCase();
+    if(ext !== 'mp3'){
+        setTimeout(()=>{
+            alert('⚠️ Invalid file! Please select an MP3 file.');
+            fileInput.value = '';
+        }, 0);
         return;
     }
 
+    startSong(file);
+};
+
+async function startSong(file){
     showScreen(loading);
 
     if(!audioCtx) audioCtx = new AudioContext();
@@ -140,7 +146,7 @@ fileInput.onchange = async e => {
 
     showScreen(game);
     detectBeats();
-};
+}
 
 // Beat detection
 let lastBeatTime = 0;
