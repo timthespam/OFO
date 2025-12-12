@@ -1,235 +1,88 @@
-// Elements
-const menu = document.getElementById('menu');
-const upload = document.getElementById('upload');
-const chooseSongBtn = document.getElementById('chooseSongBtn');
-const backUpload = document.getElementById('backUpload');
-const settings = document.getElementById('settings');
-const credits = document.getElementById('credits');
-const loading = document.getElementById('loading');
-const game = document.getElementById('game');
-const endPanel = document.getElementById('endPanel');
-const finalScore = document.getElementById('finalScore');
-const playAgainBtn = document.getElementById('playAgain');
-const backMenuBtn = document.getElementById('backMenu');
-
-const sens = document.getElementById('sens');
-const theme = document.getElementById('theme');
-const hideCursorCheckbox = document.getElementById('hideCursor');
-const target = document.getElementById('target');
-const quitBtn = document.getElementById('quit');
-const scoreEl = document.getElementById('score');
-const fileInput = document.getElementById('mp3input');
-
 let sensitivity = 1;
-let hideCursor = false;
-let pos = {x: window.innerWidth/2, y: window.innerHeight/2};
 let score = 0;
+let moving = false;
 
-// Audio
-let audioCtx, source, analyser, dataArray, audioElement;
-
-// Last circle position
-let lastCirclePos = null;
-
-// Load settings
-function loadSettings(){
-    sensitivity = parseFloat(localStorage.getItem('sens')||'1');
+function loadData() {
+    let s = localStorage.getItem("sens");
+    let t = localStorage.getItem("theme");
+    if (s) sensitivity = parseFloat(s);
+    if (t === "light") document.body.classList.add("light-theme");
     sens.value = sensitivity;
-
-    let t = localStorage.getItem('theme') || 'light';
-    theme.value = t;
-    document.body.className = t;
-
-    hideCursor = localStorage.getItem('hideCursor')==='true';
-    hideCursorCheckbox.checked = hideCursor;
-    updateCursor();
+    theme.value = t || "dark";
 }
 
-// Save settings
-function saveSettings(){
-    localStorage.setItem('sens', sens.value);
-    localStorage.setItem('theme', theme.value);
-    localStorage.setItem('hideCursor', hideCursorCheckbox.checked);
-
-    sensitivity = parseFloat(sens.value);
-    hideCursor = hideCursorCheckbox.checked;
-    document.body.className = theme.value;
-    updateCursor();
+function saveData() {
+    localStorage.setItem("sens", sensitivity);
+    localStorage.setItem("theme", theme.value);
 }
 
-// Cursor visibility
-function updateCursor(){
-    if(!game.classList.contains('hidden') && hideCursor) document.body.classList.add('hide-cursor');
-    else document.body.classList.remove('hide-cursor');
+function openSettings() {
+    menu.style.display = "none";
+    settings.style.display = "flex";
 }
 
-// Show only one panel
-function showScreen(screen){
-    menu.classList.add('hidden');
-    upload.classList.add('hidden');
-    settings.classList.add('hidden');
-    credits.classList.add('hidden');
-    game.classList.add('hidden');
-    loading.classList.add('hidden');
-    endPanel.classList.add('hidden');
-    screen.classList.remove('hidden');
-    updateCursor();
+function closeSettings() {
+    settings.style.display = "none";
+    menu.style.display = "flex";
 }
 
-// Buttons
-document.getElementById('playBtn').onclick = ()=>showScreen(upload);
-chooseSongBtn.onclick = ()=>fileInput.click();
-backUpload.onclick = ()=>showScreen(menu);
-document.getElementById('settingsBtn').onclick = ()=>showScreen(settings);
-document.getElementById('creditsBtn').onclick = ()=>showScreen(credits);
-document.getElementById('backSettings').onclick = ()=>{saveSettings(); showScreen(menu);}
-document.getElementById('backCredits').onclick = ()=>showScreen(menu);
-quitBtn.onclick = ()=>{ if(audioElement) audioElement.pause(); showScreen(menu); };
-playAgainBtn.onclick = ()=>showScreen(upload);
-backMenuBtn.onclick = ()=>showScreen(menu);
+function openCredits() {
+    menu.style.display = "none";
+    credits.style.display = "flex";
+}
 
-// Mouse follow
-document.addEventListener('mousemove', e=>{
-    if(game.classList.contains('hidden')) return;
-    let x = e.clientX-20;
-    let y = e.clientY-20;
-    pos.x += (x-pos.x)*sensitivity*0.5;
-    pos.y += (y-pos.y)*sensitivity*0.5;
-    pos.x = Math.max(0, Math.min(window.innerWidth-40, pos.x));
-    pos.y = Math.max(0, Math.min(window.innerHeight-40, pos.y));
-    target.style.left = pos.x+'px';
-    target.style.top = pos.y+'px';
-});
+function closeCredits() {
+    credits.style.display = "none";
+    menu.style.display = "flex";
+}
 
-// File upload & loading with robust MP3 validation & error handling
-fileInput.onchange = e => {
-    const file = e.target.files[0];
-    if (!file) return;
+function openHow() {
+    menu.style.display = "none";
+    how.style.display = "flex";
+}
 
-    const ext = file.name.split('.').pop().toLowerCase();
-    if (ext !== 'mp3'){
-        setTimeout(()=>{
-            alert('⚠️ Invalid file! Please select an MP3 file.');
-            fileInput.value = '';
-        },0);
-        return;
-    }
+function closeHow() {
+    how.style.display = "none";
+    menu.style.display = "flex";
+}
 
-    showScreen(loading);
-
-    startSong(file).catch(err=>{
-        console.error(err);
-        alert('⚠️ Failed to load audio. Make sure it is a valid MP3.');
-        fileInput.value = '';
-        showScreen(upload);
-    });
+theme.onchange = () => {
+    if (theme.value === "light") document.body.classList.add("light-theme");
+    else document.body.classList.remove("light-theme");
+    saveData();
 };
 
-async function startSong(file){
-    if(!audioCtx) audioCtx = new AudioContext();
-    const arrayBuffer = await file.arrayBuffer();
+sens.oninput = () => {
+    sensitivity = parseFloat(sens.value);
+    saveData();
+};
 
-    // Decode safely
-    try {
-        await new Promise((resolve,reject)=>{
-            audioCtx.decodeAudioData(arrayBuffer, resolve, reject);
-        });
-    } catch(e){
-        throw new Error('Audio decoding failed');
-    }
-
-    if(audioElement) audioElement.remove();
-    audioElement = new Audio();
-    audioElement.src = URL.createObjectURL(file);
-
-    try {
-        await audioElement.play();
-    } catch(err){
-        throw new Error('Audio playback failed: '+err.message);
-    }
-
-    source = audioCtx.createMediaElementSource(audioElement);
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 1024;
-    dataArray = new Uint8Array(analyser.frequencyBinCount);
-    source.connect(analyser);
-    analyser.connect(audioCtx.destination);
-
+function openPlay() {
     score = 0;
-    scoreEl.textContent = 'Score: 0';
-    pos.x = window.innerWidth/2;
-    pos.y = window.innerHeight/2;
-    lastCirclePos = null;
-
-    showScreen(game);
-    detectBeats();
+    scoreDisplay.innerHTML = "Score: 0";
+    menu.style.display = "none";
+    game.style.display = "block";
+    moveTarget();
 }
 
-// Beat detection
-let lastBeatTime = 0;
-function detectBeats(){
-    if(!analyser) return;
-    analyser.getByteFrequencyData(dataArray);
-
-    let lowSum = 0;
-    for(let i=0;i<dataArray.length/4;i++) lowSum+=dataArray[i];
-    const avg = lowSum/(dataArray.length/4);
-
-    const now = audioCtx.currentTime*1000;
-
-    if(avg>150 && now - lastBeatTime > 300 && Math.random()<0.7){
-        lastBeatTime = now;
-        spawnCircle();
-    }
-
-    if(audioElement.ended){
-        finalScore.textContent = 'Score: '+score;
-        showScreen(endPanel);
-        return;
-    }
-
-    requestAnimationFrame(detectBeats);
+function exitGame() {
+    game.style.display = "none";
+    menu.style.display = "flex";
 }
 
-// Spawn circle per beat
-function spawnCircle(){
-    const circle = document.createElement('div');
-    circle.className = 'beatCircle';
-    const size = 80;
+target.onclick = () => {
+    score++;
+    scoreDisplay.innerHTML = "Score: " + score;
+    moveTarget();
+};
 
-    let x,y;
-    const minDistance = 120;
-    const maxDistance = 400;
-    let attempts = 50;
-    for(let i=0;i<attempts;i++){
-        x = Math.random()*(window.innerWidth-size);
-        y = Math.random()*(window.innerHeight-size);
-        if(!lastCirclePos) break;
-        const dx = x - lastCirclePos.x;
-        const dy = y - lastCirclePos.y;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if(dist>=minDistance && dist<=maxDistance) break;
-    }
-    lastCirclePos = {x,y};
-
-    circle.style.left = x+'px';
-    circle.style.top = y+'px';
-    circle.style.background = theme.value==='dark' ? 'rgba(255,61,107,0.6)' : 'rgba(0,139,139,0.6)';
-
-    document.body.appendChild(circle);
-
-    circle.onclick = ()=>{
-        score+=100;
-        scoreEl.textContent='Score: '+score;
-        circle.remove();
-    }
-
-    setTimeout(()=>circle.remove(),1000);
+function moveTarget() {
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+    let x = Math.random() * w;
+    let y = Math.random() * h;
+    target.style.left = x + "px";
+    target.style.top = y + "px";
 }
 
-// Settings
-sens.oninput = saveSettings;
-theme.oninput = saveSettings;
-hideCursorCheckbox.oninput = saveSettings;
-
-loadSettings();
+window.onload = loadData;

@@ -1,76 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>OFO Rhythm Clicker</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>OFO</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Main Menu -->
-    <div id="menu" class="panel">
-        <h1>OFO</h1>
-        <button id="playBtn">Play</button>
-        <button id="settingsBtn">Settings</button>
-        <button id="creditsBtn">Credits</button>
-    </div>
+<div id="menu">
+    <div id="title">OFO</div>
+    <button class="btn" onclick="openPlay()">Play</button>
+    <button class="btn" onclick="openSettings()">Settings</button>
+    <button class="btn" onclick="openCredits()">Credits</button>
+    <button class="btn" onclick="openHow()">How to Play</button>
+</div>
 
-    <!-- Upload Song Panel -->
-    <div id="upload" class="hidden panel">
-        <h2>Upload Your Song</h2>
-        <p>Choose a song file to start.</p>
-        <button id="chooseSongBtn">Choose File</button>
-        <button id="backUpload">Back</button>
-        <input type="file" id="mp3input" class="hidden">
-    </div>
+<div id="settings" class="panel">
+    <div class="panel-title">Settings</div>
+    <label>Sensitivity</label>
+    <input id="sens" type="range" min="0.2" max="3" step="0.1">
+    <label>Theme</label>
+    <select id="theme">
+        <option value="dark">Dark Neon</option>
+        <option value="light">Light Neon</option>
+    </select>
+    <button class="btn small" onclick="closeSettings()">Back</button>
+</div>
 
-    <!-- Settings -->
-    <div id="settings" class="hidden panel">
-        <h2>Settings</h2>
-        <label>Sensitivity: <input type="range" id="sens" min="0.5" max="3" step="0.1"></label>
-        <br>
-        <label>Theme: 
-            <select id="theme">
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-            </select>
-        </label>
-        <br>
-        <label>
-            <input type="checkbox" id="hideCursor">
-            Hide Cursor During Play
-        </label>
-        <br>
-        <button id="backSettings">Back</button>
-    </div>
+<div id="credits" class="panel">
+    <div class="panel-title">Credits</div>
+    <div class="panel-text">Made by Timthespam V1.0</div>
+    <button class="btn small" onclick="closeCredits()">Back</button>
+</div>
 
-    <!-- Credits -->
-    <div id="credits" class="hidden panel">
-        <h2>Credits</h2>
-        <p>Made by Timthespam — V1.0</p>
-        <button id="backCredits">Back</button>
+<div id="how" class="panel">
+    <div class="panel-title">How to Play</div>
+    <div class="panel-text">
+        Click the target as quickly as possible.<br>
+        Sensitivity changes how fast targets move.<br>
+        Try to hit as many as possible.
     </div>
+    <button class="btn small" onclick="closeHow()">Back</button>
+</div>
 
-    <!-- Loading screen -->
-    <div id="loading" class="hidden panel">
-        <h2>Loading...</h2>
-        <p>Please wait while your song is processed.</p>
-    </div>
+<div id="game">
+    <div id="target"></div>
+    <div id="scoreDisplay">Score: 0</div>
+    <button id="backGame" onclick="exitGame()">Back</button>
+</div>
 
-    <!-- Game -->
-    <div id="game" class="hidden">
-        <div id="target"></div>
-        <button id="quit">Quit</button>
-        <div id="score">Score: 0</div>
-    </div>
-
-    <!-- End-of-song panel -->
-    <div id="endPanel" class="hidden panel">
-        <h2>Song Finished!</h2>
-        <p id="finalScore">Score: 0</p>
-        <button id="playAgain">Play Again</button>
-        <button id="backMenu">Back to Menu</button>
-    </div>
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
