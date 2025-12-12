@@ -1,38 +1,34 @@
 function show(id) {
-    document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-    document.getElementById(id).classList.remove("hidden");
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("visible"));
+    document.getElementById(id).classList.add("visible");
 }
 
-document.getElementById("playBtn").onclick = () => show("upload");
-document.getElementById("settingsBtn").onclick = () => show("settings");
-document.getElementById("creditsBtn").onclick = () => show("credits");
+/* MENU BUTTONS */
+playBtn.onclick = () => show("upload");
+settingsBtn.onclick = () => show("settings");
+creditsBtn.onclick = () => show("credits");
 
-document.getElementById("backUpload").onclick = () => show("menu");
-document.getElementById("backSettings").onclick = () => show("menu");
-document.getElementById("backCredits").onclick = () => show("menu");
+backUpload.onclick = () => show("menu");
+backSettings.onclick = () => show("menu");
+backCredits.onclick = () => show("menu");
 
-document.getElementById("chooseSongBtn").onclick = () =>
-    document.getElementById("mp3input").click();
+chooseSongBtn.onclick = () => mp3input.click();
 
+/* AUDIO LOAD */
+let audioContext, audioBuffer, sourceNode, score;
 
-let audioContext;
-let audioBuffer;
-let sourceNode;
-let score = 0;
-
-document.getElementById("mp3input").addEventListener("change", async (evt) => {
-    const file = evt.target.files[0];
+mp3input.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
     if (!file) return;
 
     show("loading");
-
     audioContext = new AudioContext();
-    const arrayBuffer = await file.arrayBuffer();
 
     try {
-        audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-    } catch (e) {
-        alert("Unsupported or corrupted MP3.");
+        const buf = await file.arrayBuffer();
+        audioBuffer = await audioContext.decodeAudioData(buf);
+    } catch {
+        alert("Invalid MP3 file!");
         show("upload");
         return;
     }
@@ -40,11 +36,13 @@ document.getElementById("mp3input").addEventListener("change", async (evt) => {
     startGame();
 });
 
+/* GAME LOGIC */
 function startGame() {
-    show("game");
     score = 0;
+    document.getElementById("score").innerText = "Score: 0";
 
-    // Create audio playback
+    show("game");
+
     sourceNode = audioContext.createBufferSource();
     sourceNode.buffer = audioBuffer;
     sourceNode.connect(audioContext.destination);
@@ -53,20 +51,20 @@ function startGame() {
     sourceNode.onended = endGame;
 
     const target = document.getElementById("target");
+
     target.onclick = () => {
         score++;
         document.getElementById("score").innerText = "Score: " + score;
-
         target.classList.add("active");
-        setTimeout(() => target.classList.remove("active"), 120);
+        setTimeout(() => target.classList.remove("active"), 150);
     };
 }
 
 function endGame() {
-    document.getElementById("finalScore").innerText = "Score: " + score;
+    finalScore.innerText = "Score: " + score;
     show("endPanel");
 }
 
-document.getElementById("quit").onclick = endGame;
-document.getElementById("playAgain").onclick = () => show("upload");
-document.getElementById("backMenu").onclick = () => show("menu");
+quit.onclick = endGame;
+playAgain.onclick = () => show("upload");
+backMenu.onclick = () => show("menu");

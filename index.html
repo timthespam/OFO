@@ -9,24 +9,24 @@
 <body>
 
     <!-- MENU SCREEN -->
-    <section id="menu" class="screen">
+    <section id="menu" class="screen visible">
         <h1 class="title">OFO</h1>
-        <button class="btn" id="playBtn">Play</button>
-        <button class="btn" id="settingsBtn">Settings</button>
-        <button class="btn" id="creditsBtn">Credits</button>
+        <button class="btn big" id="playBtn">Play</button>
+        <button class="btn big" id="settingsBtn">Settings</button>
+        <button class="btn big" id="creditsBtn">Credits</button>
     </section>
 
-    <!-- UPLOAD SCREEN -->
-    <section id="upload" class="screen hidden">
+    <!-- UPLOAD -->
+    <section id="upload" class="screen">
         <h2>Upload Song</h2>
-        <p>Select an MP3 file to begin.</p>
-        <button class="btn" id="chooseSongBtn">Choose File</button>
+        <p>Select an MP3 file.</p>
+        <button class="btn big" id="chooseSongBtn">Choose File</button>
         <input type="file" id="mp3input" accept=".mp3" hidden>
         <button class="btn backBtn" id="backUpload">Back</button>
     </section>
 
-    <!-- SETTINGS SCREEN -->
-    <section id="settings" class="screen hidden">
+    <!-- SETTINGS -->
+    <section id="settings" class="screen">
         <h2>Settings</h2>
 
         <label>Sensitivity</label>
@@ -38,39 +38,40 @@
             <option value="light">Light</option>
         </select>
 
-        <label><input type="checkbox" id="hideCursor"> Hide cursor while playing</label>
+        <label><input type="checkbox" id="hideCursor"> Hide cursor</label>
 
         <button class="btn backBtn" id="backSettings">Back</button>
     </section>
 
-    <!-- CREDITS SCREEN -->
-    <section id="credits" class="screen hidden">
+    <!-- CREDITS -->
+    <section id="credits" class="screen">
         <h2>Credits</h2>
-        <p>Made by timthespam — V1.0</p>
+        <p>Made by timthespam</p>
         <button class="btn backBtn" id="backCredits">Back</button>
     </section>
 
     <!-- LOADING -->
-    <section id="loading" class="screen hidden">
+    <section id="loading" class="screen">
         <h2>Loading...</h2>
         <p>Processing audio...</p>
     </section>
 
-    <!-- GAME SCREEN -->
-    <section id="game" class="screen hidden">
+    <!-- GAME -->
+    <section id="game" class="screen">
         <div id="target"></div>
         <div id="score">Score: 0</div>
         <button id="quit" class="btn quitBtn">Quit</button>
     </section>
 
-    <!-- END SCREEN -->
-    <section id="endPanel" class="screen hidden">
+    <!-- END -->
+    <section id="endPanel" class="screen">
         <h2>Song Finished!</h2>
         <p id="finalScore"></p>
-        <button class="btn" id="playAgain">Play Again</button>
-        <button class="btn" id="backMenu">Back to Menu</button>
+        <button class="btn big" id="playAgain">Play Again</button>
+        <button class="btn big" id="backMenu">Back to Menu</button>
     </section>
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>
