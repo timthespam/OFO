@@ -6,76 +6,66 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Main Menu -->
-    <div id="menu" class="panel">
-        <h1>OFO</h1>
-        <button id="playBtn">Play</button>
-        <button id="settingsBtn">Settings</button>
-        <button id="creditsBtn">Credits</button>
-        <button id="howToBtn">How to Play</button>
-    </div>
 
-    <!-- Upload Song Panel -->
-    <div id="upload" class="hidden panel">
-        <h2>Upload Your Song</h2>
-        <p>Choose a song file to start.</p>
-        <button id="chooseSongBtn">Choose File</button>
-        <button id="backUpload">Back</button>
-        <input type="file" id="mp3input" class="hidden">
-    </div>
+<!-- Main Menu -->
+<div id="menu" class="panel">
+    <h1>OFO</h1>
+    <button id="playBtn">Play</button>
+    <button id="settingsBtn">Settings</button>
+    <button id="creditsBtn">Credits</button>
+</div>
 
-    <!-- Settings -->
-    <div id="settings" class="hidden panel">
-        <h2>Settings</h2>
-        <label>Sensitivity: <input type="range" id="sens" min="0.5" max="3" step="0.1"></label>
-        <label>Theme: 
-            <select id="theme">
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-            </select>
-        </label>
-        <label>
-            <input type="checkbox" id="hideCursor">
-            Hide Cursor During Play
-        </label>
-        <button id="backSettings">Back</button>
-    </div>
+<!-- Upload Song Panel -->
+<div id="upload" class="hidden panel">
+    <h2>Upload Your Song</h2>
+    <p>Choose a song file to start.</p>
+    <button id="chooseSongBtn">Choose File</button>
+    <button id="backUpload">Back</button>
+    <input type="file" id="mp3input" class="hidden">
+</div>
 
-    <!-- Credits -->
-    <div id="credits" class="hidden panel">
-        <h2>Credits</h2>
-        <p>Made by Timthespam — V1.0</p>
-        <button id="backCredits">Back</button>
-    </div>
+<!-- Settings -->
+<div id="settings" class="hidden panel">
+    <h2>Settings</h2>
+    <label>Sensitivity: <input type="range" id="sens" min="0.5" max="3" step="0.1"></label><br>
+    <label>Theme: 
+        <select id="theme">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+        </select>
+    </label><br>
+    <label><input type="checkbox" id="hideCursor"> Hide Cursor During Play</label><br>
+    <button id="backSettings">Back</button>
+</div>
 
-    <!-- How To Play -->
-    <div id="howto" class="hidden panel">
-        <h2>How To Play</h2>
-        <p>Upload an MP3 file, follow the beat circles with your mouse, and click them!</p>
-        <button id="backHowTo">Back</button>
-    </div>
+<!-- Credits -->
+<div id="credits" class="hidden panel">
+    <h2>Credits</h2>
+    <p>Made by Timthespam — V1.0</p>
+    <button id="backCredits">Back</button>
+</div>
 
-    <!-- Loading screen -->
-    <div id="loading" class="hidden panel">
-        <h2>Loading...</h2>
-        <p>Please wait while your song is processed.</p>
-    </div>
+<!-- Loading screen -->
+<div id="loading" class="hidden panel">
+    <h2>Loading...</h2>
+    <p>Please wait while your song is processed.</p>
+</div>
 
-    <!-- Game -->
-    <div id="game" class="hidden">
-        <div id="target"></div>
-        <button id="quit">Quit</button>
-        <div id="score">Score: 0</div>
-    </div>
+<!-- Game -->
+<div id="game" class="hidden">
+    <div id="target"></div>
+    <button id="quit">Quit</button>
+    <div id="score">Score: 0</div>
+</div>
 
-    <!-- End-of-song panel -->
-    <div id="endPanel" class="hidden panel">
-        <h2>Song Finished!</h2>
-        <p id="finalScore">Score: 0</p>
-        <button id="playAgain">Play Again</button>
-        <button id="backMenu">Back to Menu</button>
-    </div>
+<!-- End-of-song panel -->
+<div id="endPanel" class="hidden panel">
+    <h2>Song Finished!</h2>
+    <p id="finalScore">Score: 0</p>
+    <button id="playAgain">Play Again</button>
+    <button id="backMenu">Back to Menu</button>
+</div>
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
