@@ -1,165 +1,69 @@
-:root{
-    --neon-dark1: #7b2fff;
-    --neon-dark2: #00e5ff;
-    --neon-light1:#ff66cc;
-    --neon-light2:#66e0ff;
-  }
-  
-  /* base */
-  html, body {
-      margin:0;
-      padding:0;
-      width:100%;
-      height:100%;
-      overflow:hidden;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-      transition: background 0.25s ease, color 0.25s ease;
-  }
-  
-  .hidden { display:none; }
-  
-  .panel {
-      max-width: 440px;
-      padding: 22px;
-      border-radius: 16px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.35);
-      background-color: rgba(255,255,255,0.95);
-      text-align:center;
-      position:absolute;
-      top:50%;
-      left:50%;
-      transform:translate(-50%, -50%);
-      transition:0.2s;
-      z-index:20;
-      border: 1px solid rgba(255,255,255,0.06);
-  }
-  
-  body.dark .panel {
-      background-color: rgba(10,8,18,0.78);
-      color:#eaf6ff;
-      border: 1px solid rgba(255,255,255,0.04);
-  }
-  
-  .panel h2{ margin: 6px 0 8px; font-size:20px; }
-  
-  /* Main menu panel looks slightly translucent */
-  #menu.panel { max-width: 520px; background: transparent; box-shadow:none; transform: none; top:auto; left:auto; position: absolute; inset:0; display:flex; flex-direction: column; align-items:center; justify-content:center; gap:18px; z-index:18; }
-  
-  #menu h1, #mainTitle {
-      font-size: 110px;
-      margin: 0;
-      letter-spacing: 8px;
-      font-weight: 900;
-      text-shadow: 0 0 34px var(--glow-1), 0 0 64px var(--glow-2);
-      color: var(--title-color);
-      transition: transform 0.35s;
-  }
-  
-  /* buttons */
-  button {
-      margin-top:8px;
-      padding:12px 26px;
-      font-size:18px;
-      cursor:pointer;
-      border-radius:12px;
-      border:2px solid transparent;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0));
-      color:inherit;
-      font-weight:700;
-      transition: transform .12s ease, box-shadow .12s ease;
-  }
-  #menu button { width: 260px; background: transparent; }
-  
-  button:active { transform: scale(.98); }
-  button:hover { transform: scale(1.03); }
-  
-  /* game area */
-  #game {
-      position:fixed;
-      top:0;
-      left:0;
-      width:100vw;
-      height:100vh;
-      background: linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06));
-      z-index:5;
-  }
-  
-  /* target (hidden - used only for cursor follow in old code) */
-  #target { width:40px; height:40px; border-radius:50%; background:red; position:absolute; z-index:900; }
-  
-  /* Quit and Score */
-  #quit {
-      position:fixed;
-      top:16px;
-      right:16px;
-      z-index:100;
-      padding:10px 14px;
-      font-size:16px;
-      border-radius:10px;
-  }
-  #score {
-      position:fixed;
-      top:16px;
-      left:16px;
-      z-index:100;
-      font-size:18px;
-      font-weight:800;
-      padding:6px 10px;
-      border-radius:8px;
-  }
-  
-  /* beat circles */
-  .beatCircle {
-      width:80px;
-      height:80px;
-      border-radius:50%;
-      position:absolute;
-      z-index:900;
-      cursor:pointer;
-      pointer-events:auto;
-      transition: transform .12s ease, opacity .12s ease;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:800;
-      color:rgba(255,255,255,0.95);
-      box-shadow: 0 8px 36px rgba(0,0,0,0.35);
-  }
-  
-  /* hide real cursor (when playing & chosen) */
-  body.hide-cursor, #game { cursor:none; }
-  
-  /* Themes - dark */
-  body.dark {
-      background: linear-gradient(180deg,#05010a,#0a0220);
-      color: #eaf6ff;
-      --glow-1: var(--neon-dark1);
-      --glow-2: var(--neon-dark2);
-      --title-color: #eaf6ff;
-  }
-  body.dark .beatCircle {
-      background: radial-gradient(circle at 30% 30%, var(--neon-dark2), var(--neon-dark1));
-  }
-  
-  /* Themes - light */
-  body.light {
-      background: linear-gradient(180deg,#fffafd,#fff8ff);
-      color: #111;
-      --glow-1: var(--neon-light1);
-      --glow-2: var(--neon-light2);
-      --title-color: #111;
-  }
-  body.light .panel { background: rgba(255,255,255,0.92); color:#111; }
-  body.light .beatCircle {
-      background: radial-gradient(circle at 30% 30%, var(--neon-light1), var(--neon-light2));
-      color:#fff;
-  }
-  
-  /* small screens */
-  @media (max-width:700px) {
-      #mainTitle { font-size: 68px; letter-spacing:6px; }
-      #menu button { width: 78vw; font-size:18px; }
-      .panel { width: 86vw; max-width:86vw; }
-      .beatCircle { width:66px; height:66px; }
-  }
-  
+html, body {
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:sans-serif;
+    transition:0.3s;
+}
+
+.hidden { display:none; }
+
+.panel {
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    background-color: rgba(255,255,255,0.95);
+    text-align:center;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    transition:0.3s;
+    z-index:2;
+}
+
+body.dark .panel { background-color: rgba(50,50,50,0.95); color:#eee; }
+
+.panel button { margin-top:15px; padding:10px 20px; font-size:18px; cursor:pointer; }
+#settings label { display:block; margin-top:10px; }
+
+#game {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    background:rgba(0,0,0,0.05);
+    z-index:1;
+}
+
+#target { width:40px; height:40px; border-radius:50%; background:red; position:absolute; z-index:10; }
+
+#quit { position:fixed; top:20px; right:20px; z-index:999; padding:10px 20px; font-size:18px; cursor:pointer; }
+#score { position:fixed; top:20px; left:20px; font-size:20px; z-index:999; }
+
+.beatCircle {
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    position:absolute;
+    z-index:900;
+    cursor:pointer;
+    pointer-events:auto;
+    transition:0.2s;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+    color:white;
+}
+
+body.hide-cursor, #game { cursor:none; }
+
+body.light { background:#f5f5f5; color:#111; }
+body.dark { background:#111; color:#eee; }
+body.light .beatCircle { background: radial-gradient(circle at 30% 30%, #66e0ff, #ff66cc); }
+body.dark .beatCircle { background: radial-gradient(circle at 30% 30%, #00e5ff, #7b2fff); }
