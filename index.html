@@ -1,53 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>OFO</title>
-<link rel="stylesheet" href="style.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OFO Rhythm Trainer</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div id="menu">
+  <div id="menu" class="screen">
     <div id="title">OFO</div>
-    <button class="btn" onclick="openPlay()">Play</button>
-    <button class="btn" onclick="openSettings()">Settings</button>
-    <button class="btn" onclick="openCredits()">Credits</button>
-    <button class="btn" onclick="openHow()">How to Play</button>
-</div>
+    <div class="menu-buttons">
+      <button class="btn" id="playBtn">Play</button>
+      <button class="btn" id="settingsBtn">Settings</button>
+      <button class="btn" id="creditsBtn">Credits</button>
+      <button class="btn" id="howBtn">How to Play</button>
+    </div>
+  </div>
 
-<div id="settings" class="panel">
+  <div id="upload" class="panel hidden">
+    <div class="panel-title">Upload Your Song</div>
+    <div class="panel-text">Choose a local MP3 file to analyze. Only .mp3 accepted.</div>
+    <div class="panel-controls">
+      <button class="btn small" id="chooseSongBtn">Choose File</button>
+      <button class="btn small secondary" id="backUpload">Back</button>
+      <input id="mp3input" type="file" accept=".mp3,audio/mpeg" class="hidden">
+    </div>
+  </div>
+
+  <div id="settings" class="panel hidden">
     <div class="panel-title">Settings</div>
-    <label>Sensitivity</label>
-    <input id="sens" type="range" min="0.2" max="3" step="0.1">
-    <label>Theme</label>
-    <select id="theme">
+    <div class="panel-text">
+      <label class="label">Mouse Sensitivity <span id="sensVal">1.0</span></label>
+      <input id="sens" type="range" min="0.2" max="4" step="0.05">
+      <label class="label">Theme</label>
+      <select id="theme">
         <option value="dark">Dark Neon</option>
         <option value="light">Light Neon</option>
-    </select>
-    <button class="btn small" onclick="closeSettings()">Back</button>
-</div>
+      </select>
+      <label class="label"><input id="hideCursor" type="checkbox"> Hide native cursor while playing</label>
+    </div>
+    <div class="panel-controls">
+      <button class="btn small" id="saveSettings">Save</button>
+      <button class="btn small secondary" id="backSettings">Back</button>
+    </div>
+  </div>
 
-<div id="credits" class="panel">
+  <div id="credits" class="panel hidden">
     <div class="panel-title">Credits</div>
-    <div class="panel-text">Made by Timthespam V1.0</div>
-    <button class="btn small" onclick="closeCredits()">Back</button>
-</div>
+    <div class="panel-text">Made by Timthespam — V1.0</div>
+    <div class="panel-controls">
+      <button class="btn small secondary" id="backCredits">Back</button>
+    </div>
+  </div>
 
-<div id="how" class="panel">
+  <div id="how" class="panel hidden">
     <div class="panel-title">How to Play</div>
     <div class="panel-text">
-        Click the target as quickly as possible.<br>
-        Sensitivity changes how fast targets move.<br>
-        Try to hit as many as possible.
+      Upload an MP3 and press play. The game analyzes audio and spawns beat circles.
+      Click or tap the circles when they appear. Use sensitivity to change how fast your aim moves (pointer-lock controlled).
+      If pointer-lock is denied the game falls back to safe mouse-delta control.
     </div>
-    <button class="btn small" onclick="closeHow()">Back</button>
-</div>
+    <div class="panel-controls">
+      <button class="btn small secondary" id="backHow">Back</button>
+    </div>
+  </div>
 
-<div id="game">
-    <div id="target"></div>
-    <div id="scoreDisplay">Score: 0</div>
-    <button id="backGame" onclick="exitGame()">Back</button>
-</div>
+  <div id="loading" class="panel hidden">
+    <div class="panel-title">Loading...</div>
+    <div class="panel-text">Processing audio, please wait.</div>
+  </div>
 
-<script src="script.js"></script>
+  <div id="game" class="hidden">
+    <div id="hud">
+      <div id="score">Score: 0</div>
+      <div id="combo">Combo: 0</div>
+      <button class="btn small secondary" id="quit">Quit</button>
+    </div>
+    <div id="arena"></div>
+    <div id="cursor" class="custom-cursor" aria-hidden="true"></div>
+  </div>
+
+  <div id="endPanel" class="panel hidden">
+    <div class="panel-title">Song Finished!</div>
+    <div class="panel-text" id="finalScore">Score: 0</div>
+    <div class="panel-controls">
+      <button class="btn small" id="playAgain">Play Again</button>
+      <button class="btn small secondary" id="backMenu">Back to Menu</button>
+    </div>
+  </div>
+
+  <div id="ad-top-left" class="ad-slot" aria-hidden="true"></div>
+  <div id="ad-top-right" class="ad-slot" aria-hidden="true"></div>
+  <div id="ad-bottom-left" class="ad-slot" aria-hidden="true"></div>
+  <div id="ad-bottom-right" class="ad-slot" aria-hidden="true"></div>
+
+  <script src="script.js"></script>
 </body>
 </html>
