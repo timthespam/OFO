@@ -1,3 +1,4 @@
+// Elements
 const menu = document.getElementById('menu');
 const upload = document.getElementById('upload');
 const chooseSongBtn = document.getElementById('chooseSongBtn');
@@ -10,8 +11,8 @@ const endPanel = document.getElementById('endPanel');
 const finalScore = document.getElementById('finalScore');
 const playAgainBtn = document.getElementById('playAgain');
 const backMenuBtn = document.getElementById('backMenu');
+
 const sens = document.getElementById('sens');
-const sensVal = document.getElementById('sensVal');
 const theme = document.getElementById('theme');
 const hideCursorCheckbox = document.getElementById('hideCursor');
 const target = document.getElementById('target');
@@ -21,131 +22,212 @@ const fileInput = document.getElementById('mp3input');
 
 let sensitivity = 1;
 let hideCursor = false;
-let pos = {x:window.innerWidth/2, y:window.innerHeight/2};
+let pos = {x: window.innerWidth/2, y: window.innerHeight/2};
 let score = 0;
-let lastCirclePos = null;
+
+// Audio
 let audioCtx, source, analyser, dataArray, audioElement;
 
-// Settings
+// Last circle position
+let lastCirclePos = null;
+
+// Load settings
 function loadSettings(){
     sensitivity = parseFloat(localStorage.getItem('sens')||'1');
     sens.value = sensitivity;
-    sensVal.textContent = sensitivity.toFixed(2);
-    let t = localStorage.getItem('theme')||'light';
+
+    let t = localStorage.getItem('theme') || 'light';
     theme.value = t;
     document.body.className = t;
+
     hideCursor = localStorage.getItem('hideCursor')==='true';
     hideCursorCheckbox.checked = hideCursor;
     updateCursor();
 }
+
+// Save settings
 function saveSettings(){
     localStorage.setItem('sens', sens.value);
     localStorage.setItem('theme', theme.value);
     localStorage.setItem('hideCursor', hideCursorCheckbox.checked);
+
     sensitivity = parseFloat(sens.value);
     hideCursor = hideCursorCheckbox.checked;
     document.body.className = theme.value;
     updateCursor();
 }
+
+// Cursor visibility
 function updateCursor(){
     if(!game.classList.contains('hidden') && hideCursor) document.body.classList.add('hide-cursor');
     else document.body.classList.remove('hide-cursor');
 }
 
-// Panels
+// Show only one panel
 function showScreen(screen){
-    [menu, upload, settings, credits, loading, game, endPanel].forEach(s=>s.classList.add('hidden'));
+    menu.classList.add('hidden');
+    upload.classList.add('hidden');
+    settings.classList.add('hidden');
+    credits.classList.add('hidden');
+    game.classList.add('hidden');
+    loading.classList.add('hidden');
+    endPanel.classList.add('hidden');
     screen.classList.remove('hidden');
     updateCursor();
 }
 
+// Buttons
 document.getElementById('playBtn').onclick = ()=>showScreen(upload);
 chooseSongBtn.onclick = ()=>fileInput.click();
 backUpload.onclick = ()=>showScreen(menu);
 document.getElementById('settingsBtn').onclick = ()=>showScreen(settings);
 document.getElementById('creditsBtn').onclick = ()=>showScreen(credits);
-document.getElementById('backSettings').onclick = ()=>{ saveSettings(); showScreen(menu); };
+document.getElementById('backSettings').onclick = ()=>{saveSettings(); showScreen(menu);}
 document.getElementById('backCredits').onclick = ()=>showScreen(menu);
 quitBtn.onclick = ()=>{ if(audioElement) audioElement.pause(); showScreen(menu); };
 playAgainBtn.onclick = ()=>showScreen(upload);
 backMenuBtn.onclick = ()=>showScreen(menu);
-sens.oninput = ()=>{ sensitivity=parseFloat(sens.value); sensVal.textContent=sensitivity.toFixed(2); };
-theme.oninput = saveSettings;
-hideCursorCheckbox.oninput = saveSettings;
 
 // Mouse follow
 document.addEventListener('mousemove', e=>{
     if(game.classList.contains('hidden')) return;
-    const targetX = e.clientX-20;
-    const targetY = e.clientY-20;
-    const alpha = Math.min(1, 0.18*sensitivity+0.06);
-    pos.x += (targetX-pos.x)*alpha;
-    pos.y += (targetY-pos.y)*alpha;
+    let x = e.clientX-20;
+    let y = e.clientY-20;
+    pos.x += (x-pos.x)*sensitivity*0.5;
+    pos.y += (y-pos.y)*sensitivity*0.5;
     pos.x = Math.max(0, Math.min(window.innerWidth-40, pos.x));
     pos.y = Math.max(0, Math.min(window.innerHeight-40, pos.y));
     target.style.left = pos.x+'px';
     target.style.top = pos.y+'px';
 });
 
-// File upload
-fileInput.onchange = async e=>{
+// File upload & loading with MP3 validation
+fileInput.onchange = e => {
     const file = e.target.files[0];
-    if(!file) return;
-    showScreen(loading);
-    const ext = (file.name.split('.').pop()||'').toLowerCase();
-    if(ext!=='mp3'){
-        setTimeout(()=>{ alert('⚠️ Only MP3 files are playable!'); showScreen(upload); fileInput.value=''; },0);
+    if (!file) return;
+
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (ext !== 'mp3'){
+        setTimeout(()=>{
+            alert('⚠️ Invalid file! Please select an MP3 file.');
+            fileInput.value = '';
+        },0);
         return;
     }
-    // play song
+
+    showScreen(loading);
+    startSong(file).catch(err=>{
+        console.error(err);
+        alert('⚠️ Failed to load audio. Make sure it is a valid MP3.');
+        fileInput.value = '';
+        showScreen(upload);
+    });
+};
+
+async function startSong(file){
     if(!audioCtx) audioCtx = new AudioContext();
-    if(audioElement){ audioElement.pause(); audioElement.remove(); }
+    const arrayBuffer = await file.arrayBuffer();
+
+    try {
+        await new Promise((resolve,reject)=>{
+            audioCtx.decodeAudioData(arrayBuffer, resolve, reject);
+        });
+    } catch(e){
+        throw new Error('Audio decoding failed');
+    }
+
+    if(audioElement) audioElement.remove();
     audioElement = new Audio();
     audioElement.src = URL.createObjectURL(file);
-    audioElement.crossOrigin = 'anonymous';
-    try { await audioElement.play(); } catch(e){ alert('⚠️ Failed to play audio'); showScreen(upload); return; }
+
+    try {
+        await audioElement.play();
+    } catch(err){
+        throw new Error('Audio playback failed: '+err.message);
+    }
+
     source = audioCtx.createMediaElementSource(audioElement);
     analyser = audioCtx.createAnalyser();
     analyser.fftSize = 1024;
     dataArray = new Uint8Array(analyser.frequencyBinCount);
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
-    score=0; scoreEl.textContent='Score: 0';
-    pos = {x:window.innerWidth/2, y:window.innerHeight/2};
-    lastCirclePos=null;
+
+    score = 0;
+    scoreEl.textContent = 'Score: 0';
+    pos.x = window.innerWidth/2;
+    pos.y = window.innerHeight/2;
+    lastCirclePos = null;
+
     showScreen(game);
     detectBeats();
-};
+}
 
 // Beat detection
-let lastBeatTime=0;
+let lastBeatTime = 0;
 function detectBeats(){
     if(!analyser) return;
     analyser.getByteFrequencyData(dataArray);
-    let lowSum=0;
+
+    let lowSum = 0;
     for(let i=0;i<dataArray.length/4;i++) lowSum+=dataArray[i];
     const avg = lowSum/(dataArray.length/4);
-    const now = Date.now();
-    if(avg>150 && now-lastBeatTime>300 && Math.random()<0.7){
+
+    const now = audioCtx.currentTime*1000;
+
+    if(avg>150 && now - lastBeatTime > 300 && Math.random()<0.7){
         lastBeatTime = now;
         spawnCircle();
     }
-    if(audioElement && audioElement.ended){ finalScore.textContent='Score: '+score; showScreen(endPanel); return; }
+
+    if(audioElement.ended){
+        finalScore.textContent = 'Score: '+score;
+        showScreen(endPanel);
+        return;
+    }
+
     requestAnimationFrame(detectBeats);
 }
 
+// Spawn circle per beat
 function spawnCircle(){
     const circle = document.createElement('div');
-    circle.className='beatCircle';
-    const size=80;
-    let x=Math.random()*(window.innerWidth-size);
-    let y=Math.random()*(window.innerHeight-size);
+    circle.className = 'beatCircle';
+    const size = 80;
+
+    let x,y;
+    const minDistance = 120;
+    const maxDistance = 400;
+    let attempts = 50;
+    for(let i=0;i<attempts;i++){
+        x = Math.random()*(window.innerWidth-size);
+        y = Math.random()*(window.innerHeight-size);
+        if(!lastCirclePos) break;
+        const dx = x - lastCirclePos.x;
+        const dy = y - lastCirclePos.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist>=minDistance && dist<=maxDistance) break;
+    }
+    lastCirclePos = {x,y};
+
     circle.style.left = x+'px';
     circle.style.top = y+'px';
+    circle.style.background = theme.value==='dark' ? 'rgba(255,61,107,0.6)' : 'rgba(0,139,139,0.6)';
+
     document.body.appendChild(circle);
-    circle.onclick = ()=>{ score+=100; scoreEl.textContent='Score: '+score; circle.remove(); };
-    setTimeout(()=>{ if(circle.parentNode) circle.remove(); },1000);
+
+    circle.onclick = ()=>{
+        score+=100;
+        scoreEl.textContent='Score: '+score;
+        circle.remove();
+    }
+
+    setTimeout(()=>circle.remove(),1000);
 }
 
+// Settings
+sens.oninput = saveSettings;
+theme.oninput = saveSettings;
+hideCursorCheckbox.oninput = saveSettings;
+
 loadSettings();
-showScreen(menu);
