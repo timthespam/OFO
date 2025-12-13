@@ -1,15 +1,9 @@
 const screens = document.querySelectorAll('.screen');
-const menu = document.getElementById('menu');
-const upload = document.getElementById('upload');
-const settings = document.getElementById('settings');
-const credits = document.getElementById('credits');
-const loading = document.getElementById('loading');
+const ui = document.getElementById('ui');
 const game = document.getElementById('game');
-const end = document.getElementById('end');
 
 const scoreEl = document.getElementById('score');
 const finalScore = document.getElementById('finalScore');
-
 const fileInput = document.getElementById('fileInput');
 const themeSelect = document.getElementById('theme');
 
@@ -24,25 +18,25 @@ function show(el){
     if(el) el.classList.remove('hidden');
 }
 
-// MENU
+// Buttons
 playBtn.onclick = ()=>show(upload);
 settingsBtn.onclick = ()=>show(settings);
 creditsBtn.onclick = ()=>show(credits);
 document.querySelectorAll('.back').forEach(b=>b.onclick=()=>show(menu));
 menuBtn.onclick = ()=>show(menu);
 
-// THEME
+fileBtn.onclick = ()=>fileInput.click();
+
 themeSelect.onchange = ()=>{
     document.body.className = themeSelect.value;
 };
 
-// FILE
 fileInput.onchange = ()=>{
     const file = fileInput.files[0];
     if(!file) return;
 
     if(!file.name.toLowerCase().endsWith('.mp3')){
-        alert('Only MP3 files supported');
+        alert('Only MP3 files are supported.');
         fileInput.value='';
         return;
     }
@@ -55,7 +49,6 @@ async function startGame(file){
     audioCtx = new AudioContext();
     analyser = audioCtx.createAnalyser();
     analyser.fftSize = 512;
-
     data = new Uint8Array(analyser.fftSize);
 
     audio = new Audio(URL.createObjectURL(file));
@@ -67,7 +60,7 @@ async function startGame(file){
     scoreEl.textContent = 'Score: 0';
 
     await audio.play();
-    show(game);
+    show(null); // hide UI
     loop();
 }
 
@@ -86,9 +79,7 @@ function loop(){
     }
 
     const now = performance.now();
-
-    // SPAWN GUARANTEE (this fixes "no notes")
-    if(energy > 20 && now - lastSpawn > 400){
+    if(energy > 20 && now - lastSpawn > 350){
         spawnNote();
         lastSpawn = now;
     }

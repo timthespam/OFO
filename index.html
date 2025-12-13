@@ -3,65 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <title>OFO Rhythm</title>
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=7">
 </head>
 <body class="light">
 
-<!-- MENU -->
-<section id="menu" class="screen">
-    <h1>OFO</h1>
-    <button id="playBtn">Play</button>
-    <button id="settingsBtn">Settings</button>
-    <button id="creditsBtn">Credits</button>
-</section>
+<!-- UI SCREENS -->
+<div id="ui">
 
-<!-- UPLOAD -->
-<section id="upload" class="screen hidden">
-    <h2>Upload Song</h2>
-    <button id="fileBtn">Choose File</button>
-    <input type="file" id="fileInput">
-    <button class="back">Back</button>
-</section>
+    <section id="menu" class="screen">
+        <h1>OFO</h1>
+        <button id="playBtn">Play</button>
+        <button id="settingsBtn">Settings</button>
+        <button id="creditsBtn">Credits</button>
+    </section>
 
-<!-- SETTINGS -->
-<section id="settings" class="screen hidden">
-    <h2>Settings</h2>
+    <section id="upload" class="screen hidden">
+        <h2>Upload Song</h2>
+        <button id="fileBtn">Choose MP3</button>
+        <input type="file" id="fileInput">
+        <button class="back">Back</button>
+    </section>
 
-    <label>
-        Theme:
-        <select id="theme">
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-        </select>
-    </label>
+    <section id="settings" class="screen hidden">
+        <h2>Settings</h2>
+        <label>
+            Theme:
+            <select id="theme">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </label>
+        <button class="back">Back</button>
+    </section>
 
-    <button class="back">Back</button>
-</section>
+    <section id="credits" class="screen hidden">
+        <h2>Credits</h2>
+        <p>Made by Timthespam</p>
+        <button class="back">Back</button>
+    </section>
 
-<!-- CREDITS -->
-<section id="credits" class="screen hidden">
-    <h2>Credits</h2>
-    <p>Made by Timthespam</p>
-    <button class="back">Back</button>
-</section>
+    <section id="loading" class="screen hidden">
+        <h2>Loading song…</h2>
+    </section>
 
-<!-- LOADING -->
-<section id="loading" class="screen hidden">
-    <h2>Analyzing audio…</h2>
-</section>
+    <section id="end" class="screen hidden">
+        <h2>Song Finished</h2>
+        <p id="finalScore"></p>
+        <button id="menuBtn">Menu</button>
+    </section>
 
-<!-- GAME -->
-<section id="game" class="hidden">
+</div>
+
+<!-- GAME LAYER (SEPARATE) -->
+<div id="game">
     <div id="score">Score: 0</div>
-</section>
+</div>
 
-<!-- END -->
-<section id="end" class="screen hidden">
-    <h2>Song Finished</h2>
-    <p id="finalScore"></p>
-    <button id="menuBtn">Menu</button>
-</section>
-
-<script src="script.js?v=6"></script>
+<script src="script.js?v=7"></script>
 </body>
 </html>

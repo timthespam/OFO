@@ -17,6 +17,15 @@ body.dark { background: #0d0d0d; color:#eee; }
 
 .hidden { display: none; }
 
+/* UI container */
+#ui {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    pointer-events: auto;
+}
+
+/* UI screens */
 .screen {
     position: absolute;
     inset: 0;
@@ -39,30 +48,37 @@ button {
     cursor: pointer;
 }
 
+/* GAME LAYER */
+#game {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: auto;
+}
+
 #score {
     position: fixed;
     top: 20px;
     left: 20px;
     font-size: 22px;
+    z-index: 5;
 }
 
-#game {
-    position: fixed;
-    inset: 0;
-}
-
+/* NOTES */
 .beat {
-    position: absolute;
+    position: fixed; /* ← THIS IS IMPORTANT */
     width: 90px;
     height: 90px;
     border-radius: 50%;
-    background: rgba(255,60,120,0.6);
+    background: rgba(255,60,120,0.65);
     transform: scale(0);
     animation: spawn 0.2s ease-out forwards;
+    cursor: pointer;
+    z-index: 2;
 }
 
 body.light .beat {
-    background: rgba(0,140,160,0.6);
+    background: rgba(0,140,160,0.65);
 }
 
 .beat.hit {
