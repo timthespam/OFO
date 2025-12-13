@@ -1,64 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>OFO Rhythm</title>
-<link rel="stylesheet" href="style.css?v=7">
+<title>Rhythm Game</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body class="light">
 
-<!-- UI SCREENS -->
+<!-- UI -->
 <div id="ui">
-
-    <section id="menu" class="screen">
-        <h1>OFO</h1>
-        <button id="playBtn">Play</button>
+    <div id="menu" class="screen">
+        <h1>Rhythm</h1>
+        <button id="play">Play</button>
         <button id="settingsBtn">Settings</button>
-        <button id="creditsBtn">Credits</button>
-    </section>
+    </div>
 
-    <section id="upload" class="screen hidden">
-        <h2>Upload Song</h2>
-        <button id="fileBtn">Choose MP3</button>
-        <input type="file" id="fileInput">
-        <button class="back">Back</button>
-    </section>
+    <div id="upload" class="screen hidden">
+        <button id="fileBtn">Choose File</button>
+        <input id="fileInput" type="file">
+        <button id="back">Back</button>
+    </div>
 
-    <section id="settings" class="screen hidden">
-        <h2>Settings</h2>
-        <label>
-            Theme:
-            <select id="theme">
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-            </select>
-        </label>
-        <button class="back">Back</button>
-    </section>
+    <div id="settings" class="screen hidden">
+        <select id="theme">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+        </select>
+        <button id="back2">Back</button>
+    </div>
 
-    <section id="credits" class="screen hidden">
-        <h2>Credits</h2>
-        <p>Made by Timthespam</p>
-        <button class="back">Back</button>
-    </section>
-
-    <section id="loading" class="screen hidden">
-        <h2>Loading song…</h2>
-    </section>
-
-    <section id="end" class="screen hidden">
-        <h2>Song Finished</h2>
-        <p id="finalScore"></p>
-        <button id="menuBtn">Menu</button>
-    </section>
-
+    <div id="loading" class="screen hidden">
+        <h2>Loading...</h2>
+    </div>
 </div>
 
-<!-- GAME LAYER (SEPARATE) -->
+<!-- GAME -->
 <div id="game">
     <div id="score">Score: 0</div>
 </div>
 
-<script src="script.js?v=7"></script>
+<script src="script.js"></script>
 </body>
 </html>
