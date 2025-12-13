@@ -2,7 +2,7 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:sans-serif;
+    font-family:Arial, sans-serif;
 }
 
 body {
@@ -11,9 +11,8 @@ body {
     overflow:hidden;
 }
 
-.hidden { display:none; }
+/* ---------- UI ---------- */
 
-/* UI */
 #ui {
     position:fixed;
     inset:0;
@@ -25,18 +24,22 @@ body {
     inset:0;
     display:flex;
     flex-direction:column;
-    align-items:center;
     justify-content:center;
+    align-items:center;
     gap:20px;
 }
 
-button {
-    width:200px;
+.hidden { display:none; }
+
+button, select {
+    width:220px;
     height:45px;
     font-size:16px;
+    cursor:pointer;
 }
 
-/* GAME */
+/* ---------- GAME ---------- */
+
 #game {
     position:fixed;
     inset:0;
@@ -51,18 +54,28 @@ button {
     font-size:20px;
 }
 
-/* NOTES */
+/* ---------- NOTES ---------- */
+
 .note {
-    position:fixed; /* NOT absolute */
+    position:fixed;
     width:80px;
     height:80px;
     border-radius:50%;
-    background:rgba(255,0,100,0.7);
+    background:rgba(255,60,120,0.7);
     cursor:pointer;
-    animation: pop 0.15s ease-out;
+    animation: spawn 0.15s ease-out;
 }
 
-@keyframes pop {
+@keyframes spawn {
     from { transform:scale(0); }
     to { transform:scale(1); }
+}
+
+/* ---------- THEMES ---------- */
+
+body.light { background:#f5f5f5; color:#111; }
+body.dark { background:#111; color:#eee; }
+
+body.dark .note {
+    background:rgba(255,80,150,0.7);
 }

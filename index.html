@@ -1,40 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Rhythm Game</title>
+<title>Rhythm Clicker</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="light">
 
-<!-- UI -->
+<!-- UI LAYER -->
 <div id="ui">
-    <div id="menu" class="screen">
-        <h1>Rhythm</h1>
-        <button id="play">Play</button>
+
+    <section id="menu" class="screen">
+        <h1>Rhythm Clicker</h1>
+        <button id="playBtn">Play</button>
         <button id="settingsBtn">Settings</button>
-    </div>
+    </section>
 
-    <div id="upload" class="screen hidden">
-        <button id="fileBtn">Choose File</button>
+    <section id="upload" class="screen hidden">
+        <h2>Select Song</h2>
+        <button id="chooseBtn">Choose File</button>
         <input id="fileInput" type="file">
-        <button id="back">Back</button>
-    </div>
+        <button id="backUpload">Back</button>
+    </section>
 
-    <div id="settings" class="screen hidden">
+    <section id="settings" class="screen hidden">
+        <h2>Settings</h2>
         <select id="theme">
             <option value="light">Light</option>
             <option value="dark">Dark</option>
         </select>
-        <button id="back2">Back</button>
-    </div>
+        <button id="backSettings">Back</button>
+    </section>
 
-    <div id="loading" class="screen hidden">
-        <h2>Loading...</h2>
-    </div>
+    <section id="loading" class="screen hidden">
+        <h2>Analyzing song…</h2>
+    </section>
+
 </div>
 
-<!-- GAME -->
+<!-- GAME LAYER -->
 <div id="game">
     <div id="score">Score: 0</div>
 </div>
