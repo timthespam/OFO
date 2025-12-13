@@ -2,47 +2,27 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Rhythm Clicker</title>
-<link rel="stylesheet" href="style.css">
+<title>OFO</title>
+<link rel="stylesheet" href="style.css?v=1">
 </head>
-<body class="light">
+<body>
 
-<!-- UI LAYER -->
-<div id="ui">
-
-    <section id="menu" class="screen">
-        <h1>Rhythm Clicker</h1>
-        <button id="playBtn">Play</button>
-        <button id="settingsBtn">Settings</button>
-    </section>
-
-    <section id="upload" class="screen hidden">
-        <h2>Select Song</h2>
-        <button id="chooseBtn">Choose File</button>
-        <input id="fileInput" type="file">
-        <button id="backUpload">Back</button>
-    </section>
-
-    <section id="settings" class="screen hidden">
-        <h2>Settings</h2>
-        <select id="theme">
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-        </select>
-        <button id="backSettings">Back</button>
-    </section>
-
-    <section id="loading" class="screen hidden">
-        <h2>Analyzing song…</h2>
-    </section>
-
+<div id="menu" class="screen">
+    <h1>OFO</h1>
+    <button id="playBtn">Play</button>
 </div>
 
-<!-- GAME LAYER -->
-<div id="game">
+<div id="upload" class="screen hidden">
+    <h2>Select Audio</h2>
+    <button id="chooseFile">Choose File</button>
+    <input id="fileInput" type="file">
+    <button id="backBtn">Back</button>
+</div>
+
+<div id="game" class="hidden">
     <div id="score">Score: 0</div>
 </div>
 
-<script src="script.js"></script>
+<script src="script.js?v=1"></script>
 </body>
 </html>

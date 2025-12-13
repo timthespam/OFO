@@ -1,49 +1,44 @@
-const screens = document.querySelectorAll('.screen');
+const menu = document.getElementById('menu');
+const upload = document.getElementById('upload');
 const game = document.getElementById('game');
-const scoreEl = document.getElementById('score');
 const fileInput = document.getElementById('fileInput');
-const themeSelect = document.getElementById('theme');
+const scoreEl = document.getElementById('score');
 
-let audioCtx, analyser, audio, data;
+let audio, audioCtx, analyser, data;
 let score = 0;
 let lastSpawn = 0;
 
-/* ---------- UI ---------- */
-
-function show(id){
-    screens.forEach(s => s.classList.add('hidden'));
-    if(id) document.getElementById(id).classList.remove('hidden');
+/* UI */
+function show(screen) {
+    menu.classList.add('hidden');
+    upload.classList.add('hidden');
+    game.classList.add('hidden');
+    if (screen) screen.classList.remove('hidden');
 }
 
-playBtn.onclick = () => show('upload');
-settingsBtn.onclick = () => show('settings');
-backUpload.onclick = () => show('menu');
-backSettings.onclick = () => show('menu');
-chooseBtn.onclick = () => fileInput.click();
+playBtn.onclick = () => show(upload);
+backBtn.onclick = () => show(menu);
+chooseFile.onclick = () => fileInput.click();
 
-themeSelect.onchange = () => {
-    document.body.className = themeSelect.value;
-};
-
-/* ---------- FILE HANDLING ---------- */
-
+/* File Handling */
 fileInput.onchange = () => {
     const file = fileInput.files[0];
-    if(!file) return;
+    if (!file) return;
 
-    if(!file.name.toLowerCase().endsWith('.mp3')){
-        alert('⚠️ This file is not an MP3.');
+    if (!file.name.toLowerCase().endsWith('.mp3')) {
+        alert('⚠️ Please upload an MP3 file');
         fileInput.value = '';
         return;
     }
 
-    show('loading');
     startGame(file);
 };
 
-/* ---------- AUDIO ---------- */
+/* Start Game */
+async function startGame(file) {
+    score = 0;
+    scoreEl.textContent = 'Score: 0';
 
-async function startGame(file){
     audioCtx = new AudioContext();
     analyser = audioCtx.createAnalyser();
     analyser.fftSize = 256;
@@ -54,42 +49,34 @@ async function startGame(file){
     src.connect(analyser);
     analyser.connect(audioCtx.destination);
 
-    score = 0;
-    scoreEl.textContent = 'Score: 0';
-
     await audio.play();
-    show(null);
-    update();
+    show(game);
+    loop();
 }
 
-/* ---------- GAME LOOP ---------- */
-
-function update(){
-    if(audio.ended) return;
+/* Game Loop */
+function loop() {
+    if (audio.ended) return;
 
     analyser.getByteFrequencyData(data);
-    let energy = data.reduce((a,b)=>a+b) / data.length;
-    let now = performance.now();
+    const energy = data.reduce((a, b) => a + b) / data.length;
+    const now = performance.now();
 
-    if(energy > 120 && now - lastSpawn > 400){
+    if (energy > 120 && now - lastSpawn > 400) {
         spawnNote();
         lastSpawn = now;
     }
 
-    requestAnimationFrame(update);
+    requestAnimationFrame(loop);
 }
 
-/* ---------- NOTE SPAWN ---------- */
-
-function spawnNote(){
+/* Spawn Notes */
+function spawnNote() {
     const note = document.createElement('div');
     note.className = 'note';
 
-    const x = Math.random() * (window.innerWidth - 80);
-    const y = Math.random() * (window.innerHeight - 80);
-
-    note.style.left = x + 'px';
-    note.style.top = y + 'px';
+    note.style.left = Math.random() * (window.innerWidth - 80) + 'px';
+    note.style.top = Math.random() * (window.innerHeight - 80) + 'px';
 
     note.onclick = () => {
         score += 100;
@@ -98,5 +85,5 @@ function spawnNote(){
     };
 
     game.appendChild(note);
-    setTimeout(() => note.remove(), 1000);
+    setTimeout(() => note.remove(), 1200);
 }
