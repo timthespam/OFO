@@ -2,76 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>OFO</title>
-    <link rel="icon" type="image/png" href="favicon.png">
+    <title>OFO Rhythm Clicker</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- MENU SCREEN -->
-    <section id="menu" class="screen visible">
-        <h1 class="title">OFO</h1>
-        <button class="btn big" id="playBtn">Play</button>
-        <button class="btn big" id="settingsBtn">Settings</button>
-        <button class="btn big" id="creditsBtn">Credits</button>
-    </section>
+<div id="menu" class="panel">
+    <h1>OFO</h1>
+    <button id="playBtn">Play</button>
+    <button id="settingsBtn">Settings</button>
+    <button id="creditsBtn">Credits</button>
+</div>
 
-    <!-- UPLOAD -->
-    <section id="upload" class="screen">
-        <h2>Upload Song</h2>
-        <p>Select an MP3 file.</p>
-        <button class="btn big" id="chooseSongBtn">Choose File</button>
-        <input type="file" id="mp3input" accept=".mp3" hidden>
-        <button class="btn backBtn" id="backUpload">Back</button>
-    </section>
+<div id="upload" class="hidden panel">
+    <h2>Upload Your Song</h2>
+    <button id="chooseSongBtn">Choose File</button>
+    <button id="backUpload">Back</button>
+    <input type="file" id="mp3input" class="hidden">
+</div>
 
-    <!-- SETTINGS -->
-    <section id="settings" class="screen">
-        <h2>Settings</h2>
-
-        <label>Sensitivity</label>
+<div id="settings" class="hidden panel">
+    <h2>Settings</h2>
+    <label>Sensitivity
         <input type="range" id="sens" min="0.5" max="3" step="0.1">
-
-        <label>Theme</label>
+    </label>
+    <label>Theme
         <select id="theme">
-            <option value="dark">Dark</option>
             <option value="light">Light</option>
+            <option value="dark">Dark</option>
         </select>
+    </label>
+    <label>
+        <input type="checkbox" id="hideCursor"> Hide Cursor
+    </label>
+    <button id="backSettings">Back</button>
+</div>
 
-        <label><input type="checkbox" id="hideCursor"> Hide cursor</label>
+<div id="credits" class="hidden panel">
+    <h2>Credits</h2>
+    <p>Made by Timthespam</p>
+    <button id="backCredits">Back</button>
+</div>
 
-        <button class="btn backBtn" id="backSettings">Back</button>
-    </section>
+<div id="loading" class="hidden panel">
+    <h2>Loading...</h2>
+</div>
 
-    <!-- CREDITS -->
-    <section id="credits" class="screen">
-        <h2>Credits</h2>
-        <p>Made by timthespam</p>
-        <button class="btn backBtn" id="backCredits">Back</button>
-    </section>
+<div id="game" class="hidden">
+    <div id="target"></div>
+    <div id="score">Score: 0</div>
+    <button id="quit">Quit</button>
+</div>
 
-    <!-- LOADING -->
-    <section id="loading" class="screen">
-        <h2>Loading...</h2>
-        <p>Processing audio...</p>
-    </section>
-
-    <!-- GAME -->
-    <section id="game" class="screen">
-        <div id="target"></div>
-        <div id="score">Score: 0</div>
-        <button id="quit" class="btn quitBtn">Quit</button>
-    </section>
-
-    <!-- END -->
-    <section id="endPanel" class="screen">
-        <h2>Song Finished!</h2>
-        <p id="finalScore"></p>
-        <button class="btn big" id="playAgain">Play Again</button>
-        <button class="btn big" id="backMenu">Back to Menu</button>
-    </section>
+<div id="endPanel" class="hidden panel">
+    <h2>Finished!</h2>
+    <p id="finalScore"></p>
+    <button id="playAgain">Play Again</button>
+    <button id="backMenu">Menu</button>
+</div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
