@@ -2,37 +2,68 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>OFO Beat Clicker</title>
-<link rel="stylesheet" href="style.css">
+<title>OFO Rhythm</title>
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body class="light">
 
+<!-- MENU -->
 <div id="menu" class="panel">
     <h1>OFO</h1>
     <button id="playBtn">Play</button>
+    <button id="settingsBtn">Settings</button>
+    <button id="creditsBtn">Credits</button>
 </div>
 
+<!-- UPLOAD -->
 <div id="upload" class="panel hidden">
     <h2>Select Song</h2>
     <button id="fileBtn">Choose File</button>
     <input type="file" id="fileInput" hidden>
-    <button id="backBtn">Back</button>
+    <button id="backUpload">Back</button>
 </div>
 
+<!-- SETTINGS -->
+<div id="settings" class="panel hidden">
+    <h2>Settings</h2>
+
+    <label>
+        Theme:
+        <select id="theme">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+        </select>
+    </label>
+
+    <br><br>
+    <button id="backSettings">Back</button>
+</div>
+
+<!-- CREDITS -->
+<div id="credits" class="panel hidden">
+    <h2>Credits</h2>
+    <p>Made by Timthespam</p>
+    <p>Version 1.0</p>
+    <button id="backCredits">Back</button>
+</div>
+
+<!-- LOADING -->
 <div id="loading" class="panel hidden">
     <h2>Analyzing audio…</h2>
 </div>
 
+<!-- GAME -->
 <div id="game" class="hidden">
     <div id="score">Score: 0</div>
 </div>
 
-<div id="end" class="panel hidden">
-    <h2>Finished</h2>
+<!-- END -->
+<div id="endPanel" class="panel hidden">
+    <h2>Song Finished</h2>
     <p id="finalScore"></p>
-    <button onclick="location.reload()">Menu</button>
+    <button id="backMenu">Menu</button>
 </div>
 
-<script src="script.js"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>

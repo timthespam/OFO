@@ -16,16 +16,22 @@ html, body {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     background: rgba(255,255,255,0.95);
     padding: 25px;
     border-radius: 16px;
     text-align: center;
+    min-width: 280px;
+}
+
+body.dark .panel {
+    background: rgba(40,40,40,0.95);
+    color: #eee;
 }
 
 button {
     width: 200px;
-    height: 45px;
+    height: 44px;
     margin: 10px auto;
     font-size: 16px;
     border-radius: 10px;
@@ -44,25 +50,33 @@ button {
     font-size: 20px;
 }
 
-.hitCircle {
+.beatCircle {
     position: absolute;
     width: 90px;
     height: 90px;
     border-radius: 50%;
-    background: rgba(255, 80, 120, 0.6);
+    background: rgba(255,60,120,0.6);
     transform: scale(0);
-    animation: appear 0.25s ease-out forwards;
+    animation: spawn 0.25s ease-out forwards;
+    cursor: pointer;
 }
 
-.hitCircle.hit {
+body.light .beatCircle {
+    background: rgba(0,140,140,0.6);
+}
+
+.beatCircle.hit {
     background: rgba(255,255,255,0.9);
     animation: hit 0.25s ease-out forwards;
 }
 
-@keyframes appear {
+@keyframes spawn {
     to { transform: scale(1); }
 }
 
 @keyframes hit {
     to { transform: scale(1.4); opacity: 0; }
 }
+
+body.light { background:#f4f4f4; }
+body.dark { background:#111; }

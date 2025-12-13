@@ -1,51 +1,80 @@
+// ===== Elements =====
 const menu = document.getElementById('menu');
 const upload = document.getElementById('upload');
+const settings = document.getElementById('settings');
+const credits = document.getElementById('credits');
 const loading = document.getElementById('loading');
 const game = document.getElementById('game');
-const end = document.getElementById('end');
+const endPanel = document.getElementById('endPanel');
 const scoreEl = document.getElementById('score');
 const finalScore = document.getElementById('finalScore');
 
 const playBtn = document.getElementById('playBtn');
-const backBtn = document.getElementById('backBtn');
+const settingsBtn = document.getElementById('settingsBtn');
+const creditsBtn = document.getElementById('creditsBtn');
+const backUpload = document.getElementById('backUpload');
+const backSettings = document.getElementById('backSettings');
+const backCredits = document.getElementById('backCredits');
+const backMenu = document.getElementById('backMenu');
+
 const fileBtn = document.getElementById('fileBtn');
 const fileInput = document.getElementById('fileInput');
+const themeSelect = document.getElementById('theme');
 
-let audioCtx, analyser, audio, data;
+// ===== State =====
+let audioCtx, analyser, audio;
+let data;
 let score = 0;
 let lastEnergy = 0;
-let lastSpawn = 0;
+let lastBeat = 0;
 let lastPos = { x: innerWidth/2, y: innerHeight/2 };
 
-// UI
-function show(el){
-    [menu,upload,loading,game,end].forEach(e=>e.classList.add('hidden'));
-    el.classList.remove('hidden');
+// ===== UI =====
+function show(screen){
+    [menu,upload,settings,credits,loading,game,endPanel]
+        .forEach(s=>s.classList.add('hidden'));
+    screen.classList.remove('hidden');
 }
 
 playBtn.onclick = ()=>show(upload);
-backBtn.onclick = ()=>show(menu);
+settingsBtn.onclick = ()=>show(settings);
+creditsBtn.onclick = ()=>show(credits);
+backUpload.onclick = ()=>show(menu);
+backSettings.onclick = ()=>show(menu);
+backCredits.onclick = ()=>show(menu);
+backMenu.onclick = ()=>show(menu);
+
+// ===== Theme =====
+themeSelect.onchange = ()=>{
+    document.body.className = themeSelect.value;
+    localStorage.setItem('theme', themeSelect.value);
+};
+
+document.body.className = localStorage.getItem('theme') || 'light';
+
+// ===== File Handling =====
 fileBtn.onclick = ()=>fileInput.click();
 
-// File handling
 fileInput.onchange = async ()=>{
     const file = fileInput.files[0];
+    fileInput.value = '';
+
     if(!file) return;
 
     if(!file.name.toLowerCase().endsWith('.mp3')){
-        alert('⚠️ Only MP3 files supported');
-        fileInput.value='';
+        alert('⚠️ Only MP3 files are supported.');
         return;
     }
 
     show(loading);
-    await startAudio(file);
+    startGame(file);
 };
 
-async function startAudio(file){
+// ===== Audio & Game =====
+async function startGame(file){
     audioCtx = new AudioContext();
     analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 512;
+    analyser.fftSize = 1024;
     data = new Uint8Array(analyser.frequencyBinCount);
 
     audio = new Audio(URL.createObjectURL(file));
@@ -53,18 +82,18 @@ async function startAudio(file){
     src.connect(analyser);
     analyser.connect(audioCtx.destination);
 
-    await audio.play();
     score = 0;
     scoreEl.textContent = 'Score: 0';
+
+    await audio.play();
     show(game);
     loop();
 }
 
-// Beat detection loop
 function loop(){
     if(audio.ended){
         finalScore.textContent = `Score: ${score}`;
-        show(end);
+        show(endPanel);
         return;
     }
 
@@ -77,19 +106,19 @@ function loop(){
     const delta = energy - lastEnergy;
     const now = performance.now();
 
-    if(delta > 25 && now-lastSpawn > 350){
+    if(delta > 25 && now - lastBeat > 350){
         spawnCircle();
-        lastSpawn = now;
+        lastBeat = now;
     }
 
     lastEnergy = energy;
     requestAnimationFrame(loop);
 }
 
-// osu-style circle spawning
+// ===== Circle Logic =====
 function spawnCircle(){
     const c = document.createElement('div');
-    c.className = 'hitCircle';
+    c.className = 'beatCircle';
 
     let x,y;
     do {
@@ -98,11 +127,8 @@ function spawnCircle(){
     } while(Math.hypot(x-lastPos.x,y-lastPos.y) < 180);
 
     lastPos = {x,y};
-
     c.style.left = x+'px';
     c.style.top = y+'px';
-
-    game.appendChild(c);
 
     let hit=false;
 
@@ -115,7 +141,6 @@ function spawnCircle(){
         setTimeout(()=>c.remove(),200);
     };
 
-    setTimeout(()=>{
-        if(!hit) c.remove();
-    },700);
+    game.appendChild(c);
+    setTimeout(()=>{ if(!hit) c.remove(); },800);
 }
