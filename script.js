@@ -1,127 +1,121 @@
-const screens = ['menu','upload','settings','credits','loading','game','endPanel']
-    .reduce((o,id)=> (o[id]=document.getElementById(id),o),{});
-
+const menu = document.getElementById('menu');
+const upload = document.getElementById('upload');
+const loading = document.getElementById('loading');
+const game = document.getElementById('game');
+const end = document.getElementById('end');
 const scoreEl = document.getElementById('score');
-const target = document.getElementById('target');
-const fileInput = document.getElementById('mp3input');
+const finalScore = document.getElementById('finalScore');
+
+const playBtn = document.getElementById('playBtn');
+const backBtn = document.getElementById('backBtn');
+const fileBtn = document.getElementById('fileBtn');
+const fileInput = document.getElementById('fileInput');
 
 let audioCtx, analyser, audio, data;
 let score = 0;
-let sensitivity = 1;
-let pos = { x: innerWidth/2, y: innerHeight/2 };
-let lastBeat = 0;
+let lastEnergy = 0;
+let lastSpawn = 0;
+let lastPos = { x: innerWidth/2, y: innerHeight/2 };
 
-// -------- UI --------
-function show(name){
-    Object.values(screens).forEach(s=>s.classList.add('hidden'));
-    screens[name].classList.remove('hidden');
+// UI
+function show(el){
+    [menu,upload,loading,game,end].forEach(e=>e.classList.add('hidden'));
+    el.classList.remove('hidden');
 }
 
-document.getElementById('playBtn').onclick = ()=>show('upload');
-document.getElementById('settingsBtn').onclick = ()=>show('settings');
-document.getElementById('creditsBtn').onclick = ()=>show('credits');
-document.getElementById('backUpload').onclick = ()=>show('menu');
-document.getElementById('backCredits').onclick = ()=>show('menu');
-document.getElementById('backSettings').onclick = ()=>show('menu');
-document.getElementById('backMenu').onclick = ()=>show('menu');
-document.getElementById('playAgain').onclick = ()=>show('upload');
-document.getElementById('chooseSongBtn').onclick = ()=>fileInput.click();
+playBtn.onclick = ()=>show(upload);
+backBtn.onclick = ()=>show(menu);
+fileBtn.onclick = ()=>fileInput.click();
 
-document.getElementById('quit').onclick = ()=>{
-    audio?.pause();
-    show('menu');
-};
-
-// -------- Mouse --------
-document.addEventListener('mousemove', e=>{
-    if(screens.game.classList.contains('hidden')) return;
-    pos.x += (e.clientX-20-pos.x)*0.4*sensitivity;
-    pos.y += (e.clientY-20-pos.y)*0.4*sensitivity;
-    target.style.left = pos.x+'px';
-    target.style.top = pos.y+'px';
-});
-
-// -------- File handling --------
-fileInput.onchange = ()=>{
+// File handling
+fileInput.onchange = async ()=>{
     const file = fileInput.files[0];
     if(!file) return;
 
     if(!file.name.toLowerCase().endsWith('.mp3')){
-        alert('⚠️ Please select an MP3 file.');
-        fileInput.value = '';
+        alert('⚠️ Only MP3 files supported');
+        fileInput.value='';
         return;
     }
 
-    startGame(file);
+    show(loading);
+    await startAudio(file);
 };
 
-async function startGame(file){
-    show('loading');
-
-    audioCtx ??= new AudioContext();
-    audio = new Audio(URL.createObjectURL(file));
-    await audio.play();
-
+async function startAudio(file){
+    audioCtx = new AudioContext();
     analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 1024;
+    analyser.fftSize = 512;
     data = new Uint8Array(analyser.frequencyBinCount);
 
+    audio = new Audio(URL.createObjectURL(file));
     const src = audioCtx.createMediaElementSource(audio);
     src.connect(analyser);
     analyser.connect(audioCtx.destination);
 
+    await audio.play();
     score = 0;
     scoreEl.textContent = 'Score: 0';
-    show('game');
+    show(game);
     loop();
 }
 
-// -------- Beat detection --------
+// Beat detection loop
 function loop(){
-    if(!audio || audio.ended){
-        document.getElementById('finalScore').textContent = `Score: ${score}`;
-        show('endPanel');
+    if(audio.ended){
+        finalScore.textContent = `Score: ${score}`;
+        show(end);
         return;
     }
 
     analyser.getByteFrequencyData(data);
 
-    let bass = 0;
-    for(let i=0;i<data.length*0.15;i++) bass += data[i];
-    bass /= data.length*0.15;
+    let energy = 0;
+    for(let i=0;i<data.length;i++) energy += data[i];
+    energy /= data.length;
 
+    const delta = energy - lastEnergy;
     const now = performance.now();
-    if(bass > 160 && now-lastBeat > 350){
-        lastBeat = now;
+
+    if(delta > 25 && now-lastSpawn > 350){
         spawnCircle();
+        lastSpawn = now;
     }
 
+    lastEnergy = energy;
     requestAnimationFrame(loop);
 }
 
-// -------- Circles --------
+// osu-style circle spawning
 function spawnCircle(){
     const c = document.createElement('div');
-    c.className = 'beatCircle';
+    c.className = 'hitCircle';
 
     let x,y;
     do {
-        x = Math.random()*(innerWidth-80);
-        y = Math.random()*(innerHeight-80);
-    } while(Math.hypot(x-pos.x,y-pos.y)<120);
+        x = Math.random()*(innerWidth-100);
+        y = Math.random()*(innerHeight-100);
+    } while(Math.hypot(x-lastPos.x,y-lastPos.y) < 180);
+
+    lastPos = {x,y};
 
     c.style.left = x+'px';
     c.style.top = y+'px';
-    document.body.appendChild(c);
+
+    game.appendChild(c);
 
     let hit=false;
-    c.onclick=()=>{
+
+    c.onclick = ()=>{
         if(hit) return;
         hit=true;
         score+=100;
         scoreEl.textContent = `Score: ${score}`;
-        c.remove();
+        c.classList.add('hit');
+        setTimeout(()=>c.remove(),200);
     };
 
-    setTimeout(()=>{ if(!hit) c.remove(); },800);
+    setTimeout(()=>{
+        if(!hit) c.remove();
+    },700);
 }
