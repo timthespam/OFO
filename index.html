@@ -3,28 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <title>OFO Rhythm</title>
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=6">
 </head>
 <body class="light">
 
 <!-- MENU -->
-<div id="menu" class="panel">
+<section id="menu" class="screen">
     <h1>OFO</h1>
     <button id="playBtn">Play</button>
     <button id="settingsBtn">Settings</button>
     <button id="creditsBtn">Credits</button>
-</div>
+</section>
 
 <!-- UPLOAD -->
-<div id="upload" class="panel hidden">
-    <h2>Select Song</h2>
+<section id="upload" class="screen hidden">
+    <h2>Upload Song</h2>
     <button id="fileBtn">Choose File</button>
-    <input type="file" id="fileInput" hidden>
-    <button id="backUpload">Back</button>
-</div>
+    <input type="file" id="fileInput">
+    <button class="back">Back</button>
+</section>
 
 <!-- SETTINGS -->
-<div id="settings" class="panel hidden">
+<section id="settings" class="screen hidden">
     <h2>Settings</h2>
 
     <label>
@@ -35,35 +35,33 @@
         </select>
     </label>
 
-    <br><br>
-    <button id="backSettings">Back</button>
-</div>
+    <button class="back">Back</button>
+</section>
 
 <!-- CREDITS -->
-<div id="credits" class="panel hidden">
+<section id="credits" class="screen hidden">
     <h2>Credits</h2>
     <p>Made by Timthespam</p>
-    <p>Version 1.0</p>
-    <button id="backCredits">Back</button>
-</div>
+    <button class="back">Back</button>
+</section>
 
 <!-- LOADING -->
-<div id="loading" class="panel hidden">
+<section id="loading" class="screen hidden">
     <h2>Analyzing audio…</h2>
-</div>
+</section>
 
 <!-- GAME -->
-<div id="game" class="hidden">
+<section id="game" class="hidden">
     <div id="score">Score: 0</div>
-</div>
+</section>
 
 <!-- END -->
-<div id="endPanel" class="panel hidden">
+<section id="end" class="screen hidden">
     <h2>Song Finished</h2>
     <p id="finalScore"></p>
-    <button id="backMenu">Menu</button>
-</div>
+    <button id="menuBtn">Menu</button>
+</section>
 
-<script src="script.js?v=4"></script>
+<script src="script.js?v=6"></script>
 </body>
 </html>

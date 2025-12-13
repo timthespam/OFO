@@ -1,41 +1,49 @@
 * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
-    font-family: sans-serif;
+    font-family: system-ui;
 }
 
-html, body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
+body {
+    width: 100vw;
+    height: 100vh;
     overflow: hidden;
+    transition: background 0.3s;
 }
+
+body.light { background: #f5f5f5; color:#111; }
+body.dark { background: #0d0d0d; color:#eee; }
 
 .hidden { display: none; }
 
-.panel {
+.screen {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(255,255,255,0.95);
-    padding: 25px;
-    border-radius: 16px;
-    text-align: center;
-    min-width: 280px;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
 }
 
-body.dark .panel {
-    background: rgba(40,40,40,0.95);
-    color: #eee;
-}
+h1 { font-size: 64px; letter-spacing: 6px; }
+h2 { font-size: 36px; }
 
 button {
-    width: 200px;
-    height: 44px;
-    margin: 10px auto;
+    width: 220px;
+    height: 46px;
+    border-radius: 12px;
+    border: none;
     font-size: 16px;
-    border-radius: 10px;
     cursor: pointer;
+}
+
+#score {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 22px;
 }
 
 #game {
@@ -43,30 +51,22 @@ button {
     inset: 0;
 }
 
-#score {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    font-size: 20px;
-}
-
-.beatCircle {
+.beat {
     position: absolute;
     width: 90px;
     height: 90px;
     border-radius: 50%;
     background: rgba(255,60,120,0.6);
     transform: scale(0);
-    animation: spawn 0.25s ease-out forwards;
-    cursor: pointer;
+    animation: spawn 0.2s ease-out forwards;
 }
 
-body.light .beatCircle {
-    background: rgba(0,140,140,0.6);
+body.light .beat {
+    background: rgba(0,140,160,0.6);
 }
 
-.beatCircle.hit {
-    background: rgba(255,255,255,0.9);
+.beat.hit {
+    background: rgba(255,255,255,0.95);
     animation: hit 0.25s ease-out forwards;
 }
 
@@ -77,6 +77,3 @@ body.light .beatCircle {
 @keyframes hit {
     to { transform: scale(1.4); opacity: 0; }
 }
-
-body.light { background:#f4f4f4; }
-body.dark { background:#111; }
