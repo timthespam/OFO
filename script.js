@@ -1,91 +1,100 @@
-const screens = {
-    menu: menu,
-    upload: upload,
-    settings: settings,
-    credits: credits,
-    loading: loading,
-    game: game,
-    end: endPanel
+const menu = document.getElementById("menu");
+const upload = document.getElementById("upload");
+const settings = document.getElementById("settings");
+const game = document.getElementById("game");
+
+const playBtn = document.getElementById("playBtn");
+const uploadBtn = document.getElementById("uploadBtn");
+const fileInput = document.getElementById("fileInput");
+
+const cursor = document.getElementById("cursor");
+const scoreEl = document.getElementById("score");
+
+const sensInput = document.getElementById("sens");
+const themeSelect = document.getElementById("theme");
+
+let audioCtx, analyser, data;
+let audio;
+let score = 0;
+let sens = 1;
+let pos = { x: innerWidth / 2, y: innerHeight / 2 };
+
+function show(el) {
+  [menu, upload, settings, game].forEach(e => e.classList.add("hidden"));
+  el.classList.remove("hidden");
+}
+
+playBtn.onclick = () => show(upload);
+document.getElementById("settingsBtn").onclick = () => show(settings);
+
+uploadBtn.onclick = () => fileInput.click();
+
+fileInput.onchange = () => {
+  const file = fileInput.files[0];
+  if (!file || !file.name.endsWith(".mp3")) {
+    alert("Please upload an MP3 file");
+    return;
+  }
+  startGame(file);
+};
+
+sensInput.oninput = () => sens = parseFloat(sensInput.value);
+themeSelect.onchange = () => document.body.className = themeSelect.value;
+
+document.addEventListener("mousemove", e => {
+  if (game.classList.contains("hidden")) return;
+  pos.x += (e.clientX - pos.x) * sens;
+  pos.y += (e.clientY - pos.y) * sens;
+  cursor.style.left = pos.x - 20 + "px";
+  cursor.style.top = pos.y - 20 + "px";
+});
+
+function startGame(file) {
+  show(game);
+  score = 0;
+  scoreEl.textContent = "Score: 0";
+
+  audioCtx = new AudioContext();
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 256;
+  data = new Uint8Array(analyser.frequencyBinCount);
+
+  audio = new Audio(URL.createObjectURL(file));
+  const src = audioCtx.createMediaElementSource(audio);
+  src.connect(analyser);
+  analyser.connect(audioCtx.destination);
+  audio.play();
+
+  loop();
+}
+
+let lastSpawn = 0;
+function loop() {
+  analyser.getByteFrequencyData(data);
+  const avg = data.reduce((a,b)=>a+b) / data.length;
+
+  if (avg > 130 && Date.now() - lastSpawn > 300) {
+    spawnCircle();
+    lastSpawn = Date.now();
+  }
+
+  if (!audio.ended) requestAnimationFrame(loop);
+}
+
+function spawnCircle() {
+  const c = document.createElement("div");
+  c.className = "circle";
+
+  const size = 80;
+  c.style.left = Math.random() * (innerWidth - size) + "px";
+  c.style.top = Math.random() * (innerHeight - size) + "px";
+
+  c.onclick = () => {
+    score += 100;
+    scoreEl.textContent = "Score: " + score;
+    c.remove();
   };
-  
-  let sensitivity = 1;
-  let score = 0;
-  let audio, ctx, analyser, data;
-  let pos = { x: innerWidth/2, y: innerHeight/2 };
-  
-  function show(screen) {
-    Object.values(screens).forEach(s => s.classList.add("hidden"));
-    screen.classList.remove("hidden");
-  }
-  
-  playBtn.onclick = () => show(upload);
-  settingsBtn.onclick = () => show(settings);
-  creditsBtn.onclick = () => show(credits);
-  backUpload.onclick = () => show(menu);
-  backSettings.onclick = () => show(menu);
-  backCredits.onclick = () => show(menu);
-  backMenu.onclick = () => show(menu);
-  playAgain.onclick = () => show(upload);
-  
-  chooseSongBtn.onclick = () => mp3input.click();
-  
-  mp3input.onchange = e => {
-    const file = e.target.files[0];
-    if (!file || !file.name.endsWith(".mp3")) {
-      alert("MP3 only");
-      return;
-    }
-    startGame(file);
-  };
-  
-  function startGame(file) {
-    show(loading);
-    audio = new Audio(URL.createObjectURL(file));
-    ctx = new AudioContext();
-    analyser = ctx.createAnalyser();
-    data = new Uint8Array(analyser.frequencyBinCount);
-    const src = ctx.createMediaElementSource(audio);
-    src.connect(analyser);
-    analyser.connect(ctx.destination);
-  
-    score = 0;
-    scoreEl.textContent = "Score: 0";
-    audio.play();
-    show(game);
-    tick();
-  }
-  
-  function tick() {
-    if (audio.ended) {
-      finalScore.textContent = "Score: " + score;
-      show(endPanel);
-      return;
-    }
-    analyser.getByteFrequencyData(data);
-    if (Math.max(...data) > 200) spawnCircle();
-    requestAnimationFrame(tick);
-  }
-  
-  function spawnCircle() {
-    const c = document.createElement("div");
-    c.className = "beatCircle";
-    c.style.left = Math.random()*(innerWidth-80)+"px";
-    c.style.top = Math.random()*(innerHeight-80)+"px";
-    c.style.background = "rgba(0,200,255,0.6)";
-    c.onclick = () => {
-      score += 100;
-      scoreEl.textContent = "Score: " + score;
-      c.remove();
-    };
-    document.body.appendChild(c);
-    setTimeout(() => c.remove(), 1500);
-  }
-  
-  document.addEventListener("mousemove", e => {
-    if (game.classList.contains("hidden")) return;
-    pos.x += (e.clientX - pos.x) * sensitivity;
-    pos.y += (e.clientY - pos.y) * sensitivity;
-    target.style.left = pos.x+"px";
-    target.style.top = pos.y+"px";
-  });
-  
+
+  document.body.appendChild(c);
+  setTimeout(() => c.remove(), 1200);
+}
